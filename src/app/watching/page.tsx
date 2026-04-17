@@ -7,7 +7,7 @@ import { Suspense } from "react";
 interface AthleteInfo {
   id: string;
   nameKanji: string;
-  teamName: string | null;
+  team: { id: string; name: string } | null;
   personalBest: { event: string; timeString: string } | null;
   recentRecords: { event: string; timeString: string; date: string; competitionName: string }[];
 }
@@ -84,7 +84,7 @@ function WatchingContent() {
           athleteData[aid] = {
             id: aid,
             nameKanji: a.nameKanji,
-            teamName: a.teamName,
+            team: a.team ?? null,
             personalBest: bestEntry ? { event: bestEntry[0], timeString: (bestEntry[1] as { timeString: string }).timeString } : null,
             recentRecords,
           };
@@ -275,7 +275,7 @@ function WatchingContent() {
                       {athlete ? (
                         <>
                           <Link href={`/athletes/${athlete.id}`} className="link-text" style={{ fontSize: "12px", fontWeight: 500, display: "block", marginBottom: "0.35rem" }}>{athlete.nameKanji}</Link>
-                          <div style={{ fontSize: "10px", color: "var(--color-text-secondary)" }}>所属: {athlete.teamName || "—"}</div>
+                          <div style={{ fontSize: "10px", color: "var(--color-text-secondary)" }}>所属: {athlete.team?.name || "—"}</div>
                           {athlete.personalBest && <div style={{ fontSize: "10px", color: "var(--color-text-secondary)" }}>PB {athlete.personalBest.event}: <strong style={{ color: "var(--color-text-primary)" }}>{athlete.personalBest.timeString}</strong></div>}
                           {athlete.recentRecords.slice(0, 1).map((r, i) => (
                             <div key={i} style={{ fontSize: "10px", color: "var(--color-text-secondary)" }}>
@@ -308,7 +308,7 @@ function WatchingContent() {
               {data.athleteInfos.filter((a) => selectedAthleteIds.has(a.id)).map((a) => (
                 <div key={a.id} style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-md)", border: "1.5px solid #9FE1CB", padding: "0.65rem 0.85rem" }}>
                   <Link href={`/athletes/${a.id}`} className="link-text" style={{ fontSize: "12px", fontWeight: 500, display: "block", marginBottom: "2px" }}>{a.nameKanji}</Link>
-                  <div style={{ fontSize: "10px", color: "var(--color-text-secondary)", marginBottom: "0.35rem" }}>{a.teamName || "—"}</div>
+                  <div style={{ fontSize: "10px", color: "var(--color-text-secondary)", marginBottom: "0.35rem" }}>{a.team?.name || "—"}</div>
                   {a.personalBest && <div style={{ fontSize: "10px", color: "var(--color-text-secondary)" }}>PB: <strong style={{ color: "var(--color-text-primary)" }}>{a.personalBest.timeString}</strong></div>}
                   {a.recentRecords.map((r, i) => (
                     <div key={i} style={{ fontSize: "10px", color: "var(--color-text-secondary)" }}>{formatDate(r.date)}: <strong style={{ color: "var(--color-text-primary)" }}>{r.timeString}</strong></div>
@@ -337,7 +337,7 @@ function WatchingContent() {
                     <td>
                       <Link href={`/athletes/${a.id}`} className="link-text" onClick={(e) => e.stopPropagation()}>{a.nameKanji}</Link>
                     </td>
-                    <td style={{ color: "var(--color-text-secondary)" }}>{a.teamName || "—"}</td>
+                    <td style={{ color: "var(--color-text-secondary)" }}>{a.team?.name || "—"}</td>
                     <td style={{ whiteSpace: "normal", lineHeight: "1.7" }}>
                       {a.recentRecords.length === 0 ? (
                         <span style={{ color: "var(--color-text-tertiary)" }}>—</span>

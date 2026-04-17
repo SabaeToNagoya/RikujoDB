@@ -6,7 +6,7 @@ import { EVENTS } from "@/lib/timeUtils";
 interface Athlete {
   id: string;
   nameKanji: string;
-  teamName: string | null;
+  team: { id: string; name: string } | null;
   mainEvent: string | null;
   personalBest: { event: string; timeString: string } | null;
 }
@@ -180,7 +180,7 @@ export default function WatchingSetupPage() {
                 <div style={{ flex: 1 }}>
                   <span style={{ fontSize: "11px", fontWeight: 500 }}>{a.nameKanji}</span>
                   <span style={{ fontSize: "10px", color: "var(--color-text-secondary)", marginLeft: "6px" }}>
-                    {[a.teamName, a.mainEvent && `${a.mainEvent} PB: ${a.personalBest?.timeString}`].filter(Boolean).join(" · ")}
+                    {[a.team?.name, a.mainEvent && `${a.mainEvent} PB: ${a.personalBest?.timeString}`].filter(Boolean).join(" · ")}
                   </span>
                 </div>
               </div>

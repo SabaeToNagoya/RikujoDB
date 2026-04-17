@@ -17,7 +17,8 @@ model Athlete {
   prefecture   String?   // 出身都道府県
   highSchool   String?   // 出身高校
   university   String?   // 出身大学
-  teamName     String?   // 現在の所属チーム（表示用）
+  teamId       String?   // 現在の所属チームID
+  team         Team?     @relation("AthleteTeam", fields: [teamId], references: [id], onDelete: SetNull)
   gender       String    // 男性 / 女性
   notes        String?   // 備考
 
@@ -34,6 +35,7 @@ model Team {
   type      String       // 実業団 / 大学 / 高校
   notes     String?
 
+  athletes  Athlete[]    @relation("AthleteTeam") // このチームに所属する選手
   records   Record[]     // このチームに紐づく記録
   results   TeamResult[]
 

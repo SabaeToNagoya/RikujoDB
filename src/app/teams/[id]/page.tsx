@@ -7,7 +7,7 @@ import Link from "next/link";
 interface TeamAthlete {
   id: string;
   nameKanji: string;
-  teamName: string | null;
+  team: { id: string; name: string } | null;
   mainEvent: string | null;
   bestByEvent: Record<string, string>;
 }

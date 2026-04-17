@@ -9,7 +9,7 @@ interface RankingRecord {
   competitionName: string;
   date: string;
   athleteId: string;
-  athlete: { id: string; nameKanji: string; gender: string; teamName: string | null };
+  athlete: { id: string; nameKanji: string; gender: string; team: { id: string; name: string } | null };
   team: { name: string } | null;
 }
 
@@ -115,7 +115,7 @@ export default function RankingsPage() {
                     <Link href={`/athletes/${r.athlete.id}`} className="link-text">{r.athlete.nameKanji}</Link>
                   </td>
                   <td style={{ fontWeight: 500 }}>{r.timeString}</td>
-                  <td style={{ color: "var(--color-text-secondary)" }}>{r.team?.name || r.athlete.teamName || "—"}</td>
+                  <td style={{ color: "var(--color-text-secondary)" }}>{r.team?.name || r.athlete.team?.name || "—"}</td>
                   <td style={{ color: "var(--color-text-secondary)" }}>{r.competitionName}</td>
                   <td style={{ color: "var(--color-text-secondary)" }}>{formatDate(r.date)}</td>
                 </tr>

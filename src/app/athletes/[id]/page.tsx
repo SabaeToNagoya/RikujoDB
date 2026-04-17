@@ -28,7 +28,8 @@ interface AthleteDetail {
   prefecture: string | null;
   highSchool: string | null;
   university: string | null;
-  teamName: string | null;
+  teamId: string | null;
+  team: { id: string; name: string } | null;
   gender: string;
   notes: string | null;
   records: AthleteRecord[];
@@ -179,7 +180,7 @@ export default function AthleteDetailPage() {
               formatDOB(athlete.dateOfBirth),
               athlete.prefecture,
               [athlete.highSchool, athlete.university].filter(Boolean).join(" → "),
-              athlete.teamName,
+              athlete.team?.name,
             ]
               .filter(Boolean)
               .join(" · ")}

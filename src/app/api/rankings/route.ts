@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     where,
     include: {
       athlete: {
-        select: { id: true, nameKanji: true, gender: true, teamName: true },
+        select: { id: true, nameKanji: true, gender: true, team: { select: { id: true, name: true } } },
       },
       team: { select: { name: true } },
     },

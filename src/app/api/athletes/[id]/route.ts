@@ -13,6 +13,7 @@ export async function GET(
   const athlete = await prisma.athlete.findUnique({
     where: { id: params.id },
     include: {
+      team: { select: { id: true, name: true } },
       records: {
         orderBy: { date: "desc" },
         include: { team: { select: { name: true } } },
@@ -89,6 +90,7 @@ export async function PUT(
   const body = await req.json();
   const athlete = await prisma.athlete.update({
     where: { id: params.id },
+    include: { team: { select: { id: true, name: true } } },
     data: {
       nameKanji: body.nameKanji,
       nameFurigana: body.nameFurigana || "",
@@ -96,7 +98,7 @@ export async function PUT(
       prefecture: body.prefecture || null,
       highSchool: body.highSchool || null,
       university: body.university || null,
-      teamName: body.teamName || null,
+      teamId: body.teamId || null,
       gender: body.gender || "男性",
       notes: body.notes || null,
     },

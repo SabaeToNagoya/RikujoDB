@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
             { nameFurigana: { contains: name } },
           ],
         } : {},
-        team ? { teamName: { contains: team } } : {},
+        team ? { team: { name: { contains: team } } } : {},
         school ? {
           OR: [
             { highSchool: { contains: school } },
@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
       ],
     },
     include: {
+      team: { select: { id: true, name: true } },
       records: {
         orderBy: { timeSeconds: "asc" },
         select: { event: true, timeSeconds: true, timeString: true, date: true, competitionName: true, ranking: true },
@@ -88,10 +89,11 @@ export async function POST(req: NextRequest) {
       prefecture: body.prefecture || null,
       highSchool: body.highSchool || null,
       university: body.university || null,
-      teamName: body.teamName || null,
+      teamId: body.teamId || null,
       gender: body.gender || "男性",
       notes: body.notes || null,
     },
+    include: { team: { select: { id: true, name: true } } },
   });
   return NextResponse.json(athlete, { status: 201 });
 }

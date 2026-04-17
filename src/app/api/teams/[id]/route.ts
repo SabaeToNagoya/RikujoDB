@@ -29,7 +29,7 @@ export async function GET(
     athleteIds.map(async ({ athleteId }) => {
       const a = await prisma.athlete.findUnique({
         where: { id: athleteId },
-        select: { id: true, nameKanji: true, teamName: true },
+        select: { id: true, nameKanji: true, team: { select: { id: true, name: true } } },
       });
       const records = await prisma.record.findMany({
         where: { athleteId, teamId: params.id },

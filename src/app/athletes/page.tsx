@@ -4,6 +4,11 @@ import Link from "next/link";
 import { Modal } from "@/components/ui/Modal";
 import { EVENTS, PREFECTURES } from "@/lib/timeUtils";
 
+interface Team {
+  id: string;
+  name: string;
+}
+
 interface Athlete {
   id: string;
   nameKanji: string;
@@ -11,7 +16,8 @@ interface Athlete {
   dateOfBirth: string | null;
   highSchool: string | null;
   university: string | null;
-  teamName: string | null;
+  teamId: string | null;
+  team: Team | null;
   gender: string;
   prefecture: string | null;
   notes: string | null;
@@ -26,7 +32,7 @@ const EMPTY_FORM = {
   prefecture: "",
   highSchool: "",
   university: "",
-  teamName: "",
+  teamId: "",
   gender: "男性",
   notes: "",
 };
@@ -47,6 +53,7 @@ function EventBadge({ event }: { event: string | null }) {
 
 export default function AthletesPage() {
   const [athletes, setAthletes] = useState<Athlete[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ name: "", event: "", team: "", school: "" });
   const [modalOpen, setModalOpen] = useState(false);
@@ -54,6 +61,13 @@ export default function AthletesPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  // チーム一覧を取得
+  useEffect(() => {
+    fetch("/api/teams")
+      .then((r) => r.json())
+      .then((data: Team[]) => setTeams(data));
+  }, []);
 
   const loadAthletes = useCallback(() => {
     setLoading(true);
@@ -84,7 +98,7 @@ export default function AthletesPage() {
       prefecture: a.prefecture || "",
       highSchool: a.highSchool || "",
       university: a.university || "",
-      teamName: a.teamName || "",
+      teamId: a.teamId || "",
       gender: a.gender,
       notes: a.notes || "",
     });
@@ -188,7 +202,11 @@ export default function AthletesPage() {
                   <td style={{ color: "var(--color-text-secondary)" }}>{formatDOB(a.dateOfBirth)}</td>
                   <td style={{ color: "var(--color-text-secondary)" }}>{a.highSchool || "—"}</td>
                   <td style={{ color: "var(--color-text-secondary)" }}>{a.university || "—"}</td>
-                  <td>{a.teamName || "—"}</td>
+                  <td>
+                    {a.team
+                      ? <Link href={`/teams/${a.team.id}`} className="link-text">{a.team.name}</Link>
+                      : "—"}
+                  </td>
                   <td><EventBadge event={a.mainEvent} /></td>
                   <td style={{ fontWeight: 500 }}>{a.personalBest?.timeString || "—"}</td>
                 </tr>
@@ -251,7 +269,12 @@ export default function AthletesPage() {
           </div>
           <div>
             <label className="form-label">所属チーム</label>
-            <input className="form-input" value={form.teamName} onChange={(e) => f("teamName", e.target.value)} placeholder="富士通" />
+            <select className="form-select" value={form.teamId} onChange={(e) => f("teamId", e.target.value)}>
+              <option value="">未設定</option>
+              {teams.map((t) => (
+                <option key={t.id} value={t.id}>{t.name}</option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="form-label">備考</label>
