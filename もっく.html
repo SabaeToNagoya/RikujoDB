@@ -1,0 +1,591 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.app{font-family:var(--font-sans)}
+.nav{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 1rem;display:flex;align-items:center;height:44px}
+.logo{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-right:1.5rem;display:flex;align-items:center;gap:5px;flex-shrink:0}
+.lm{width:18px;height:18px;background:#1D9E75;border-radius:4px;display:flex;align-items:center;justify-content:center}
+.lm svg{width:11px;height:11px;fill:white}
+.ntabs{display:flex;height:100%}
+.ntab{padding:0 14px;font-size:12px;color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;border-bottom:2px solid transparent;white-space:nowrap}
+.ntab:hover{color:var(--color-text-primary)}
+.ntab.on{color:#0F6E56;border-bottom-color:#1D9E75;font-weight:500}
+.main{flex:1;background:var(--color-background-tertiary);padding:1.1rem;min-width:0}
+.sc{display:none}.sc.on{display:block}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.9rem}
+.pt{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.psub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.btn{font-size:11px;padding:4px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;white-space:nowrap}
+.btnp{background:#1D9E75;color:white;border-color:#1D9E75}
+.card{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:.9rem 1.1rem;margin-bottom:.9rem}
+.ct{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:.65rem}
+.tbl{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
+.tbl th{text-align:left;padding:6px 7px;font-size:10px;font-weight:500;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.tbl td{padding:7px 7px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--color-background-secondary)}
+.lnk{color:#1D9E75;cursor:pointer}
+.bdg{display:inline-block;font-size:10px;padding:2px 6px;border-radius:99px;white-space:nowrap}
+.bg{background:#E1F5EE;color:#085041}
+.bb{background:#E6F1FB;color:#0C447C}
+.ba{background:#FAEEDA;color:#633806}
+.bp{background:#EEEDFE;color:#3C3489}
+.tabs{display:flex;margin-bottom:.75rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.tb{font-size:11px;padding:5px 12px;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;margin-bottom:-0.5px;white-space:nowrap}
+.tb.on{color:#0F6E56;border-bottom-color:#1D9E75;font-weight:500}
+.sb{display:flex;gap:6px;margin-bottom:.75rem;flex-wrap:wrap}
+.sb input,.sb select{font-size:11px;padding:5px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
+.sb input{flex:1;min-width:100px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.sg4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:.9rem}
+.mc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.6rem .8rem}
+.ml{font-size:10px;color:var(--color-text-secondary);margin-bottom:3px}
+.mv{font-size:17px;font-weight:500;color:var(--color-text-primary)}
+.ms{font-size:10px;color:#1D9E75;margin-top:1px}
+.hd2{display:flex;align-items:flex-start;gap:12px;margin-bottom:.9rem}
+.av{width:42px;height:42px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#0F6E56;flex-shrink:0}
+.ticon{width:42px;height:42px;border-radius:var(--border-radius-md);background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#0F6E56;flex-shrink:0}
+.an{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.am{font-size:11px;color:var(--color-text-secondary);margin-top:2px;line-height:1.6}
+.bg3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:.9rem}
+.bg2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.9rem}
+.bc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.6rem .8rem}
+.be{font-size:10px;color:var(--color-text-secondary);margin-bottom:2px}
+.bt{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.bd{font-size:10px;color:var(--color-text-tertiary);margin-top:1px}
+.conn-row{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.conn-row:last-child{border-bottom:none}
+.rbdg{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border-radius:50%;font-size:10px;font-weight:500}
+.r1{background:#FAEEDA;color:#633806}
+.r2{background:#F1EFE8;color:#444441}
+.r3{background:#FAECE7;color:#712B13}
+.rn{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.rank-hist{display:flex;align-items:flex-end;gap:5px;padding:.55rem 0}
+.rh-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
+.rh-bw{height:48px;display:flex;align-items:flex-end;width:100%}
+.rh-b{width:100%;background:#9FE1CB;border-radius:2px 2px 0 0;min-height:3px}
+.rh-r{font-size:10px;font-weight:500;color:#0F6E56}
+.rh-y{font-size:9px;color:var(--color-text-tertiary)}
+.breadcrumb{font-size:11px;color:var(--color-text-secondary);margin-bottom:.7rem;display:flex;align-items:center;gap:4px}
+.bc-lnk{color:#1D9E75;cursor:pointer}
+.bc-sep{color:var(--color-text-tertiary)}
+.step{display:flex;align-items:flex-start;gap:8px;padding:.65rem;border-radius:var(--border-radius-md);background:var(--color-background-secondary);margin-bottom:6px}
+.sn{width:19px;height:19px;border-radius:50%;background:#1D9E75;color:white;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sd{font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:1px}
+.ss{font-size:11px;color:var(--color-text-secondary)}
+.upload-box{border:1px dashed var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:1.5rem;text-align:center;margin-bottom:.85rem;background:var(--color-background-secondary)}
+.upload-text{font-size:12px;color:var(--color-text-secondary);margin-bottom:.5rem}
+.upload-hint{font-size:10px;color:var(--color-text-tertiary)}
+.type-sel{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.85rem}
+.type-card{border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:.9rem;text-align:center;cursor:pointer;background:var(--color-background-primary)}
+.type-card:hover{background:var(--color-background-secondary)}
+.type-card.on{border:2px solid #1D9E75;background:#E1F5EE}
+.type-label{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.type-desc{font-size:10px;color:var(--color-text-secondary)}
+.chk-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);margin-bottom:5px;cursor:pointer}
+.chk-row:hover{background:var(--color-background-secondary)}
+.chk-row.sel{background:#E1F5EE;border-color:#9FE1CB}
+.chk{width:14px;height:14px;border-radius:3px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:transparent}
+.chk.on{background:#1D9E75;border-color:#1D9E75;color:white}
+.tblk{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:.6rem;overflow:hidden}
+.tblk-hd{display:flex;align-items:center;justify-content:space-between;padding:.55rem .85rem;background:var(--color-background-secondary);cursor:pointer}
+.tblk-hd:hover{background:var(--color-background-primary)}
+.tblk-name{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.tblk-body{border-top:0.5px solid var(--color-border-tertiary)}
+.leg-row{display:flex;align-items:center;padding:5px .85rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.leg-row:last-child{border-bottom:none}
+.leg-n{width:20px;font-size:10px;color:var(--color-text-tertiary);text-align:center;flex-shrink:0}
+.leg-nm{font-size:11px;color:#1D9E75;cursor:pointer;flex:1}
+.leg-sch{font-size:10px;color:var(--color-text-secondary);width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.leg-rec{font-size:10px;color:var(--color-text-tertiary);width:90px;text-align:right}
+.past-bar{background:var(--color-background-tertiary);padding:.35rem .85rem;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;gap:10px;flex-wrap:wrap}
+.pb-item{font-size:10px;color:var(--color-text-secondary)}
+.collapse{display:none}.collapse.open{display:block}
+.seg-sel{display:flex;gap:5px;margin-bottom:.75rem;flex-wrap:wrap}
+.seg-btn{font-size:11px;padding:3px 9px;border-radius:99px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer}
+.seg-btn.on{background:#1D9E75;color:white;border-color:#1D9E75}
+.cmp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px}
+.cmp-card{background:var(--color-background-primary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);padding:.65rem .85rem}
+.cmp-name{font-size:12px;font-weight:500;color:#1D9E75;margin-bottom:2px}
+.cmp-team{font-size:10px;color:var(--color-text-secondary);margin-bottom:.35rem}
+.cmp-item{font-size:10px;color:var(--color-text-secondary);margin-bottom:2px}
+.cmp-item b{color:var(--color-text-primary);font-weight:500}
+.watch-hd{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.7rem 1rem;margin-bottom:.85rem;display:flex;align-items:center;justify-content:space-between}
+</style>
+
+<h2 class="sr-only">陸上競技情報システム フルモックアップ v7</h2>
+
+<div class="app">
+<div class="nav">
+  <div class="logo">
+    <div class="lm"><svg viewBox="0 0 16 16"><path d="M8 2L10 6H14L11 9L12 13L8 11L4 13L5 9L2 6H6Z"/></svg></div>
+    RaceBase
+  </div>
+  <div class="ntabs">
+    <div class="ntab on"  onclick="sw('dash',this)">ダッシュボード</div>
+    <div class="ntab" onclick="sw('ath',this)">選手</div>
+    <div class="ntab" onclick="sw('teams',this)">チーム</div>
+    <div class="ntab" onclick="sw('rank',this)">ランキング</div>
+    <div class="ntab" onclick="sw('imp',this)">記録取り込み</div>
+    <div class="ntab" onclick="sw('setup',this)">観戦セットアップ</div>
+    <div class="ntab" onclick="sw('watch',this)">観戦モード</div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ① ダッシュボード -->
+<div class="sc on" id="sc-dash">
+  <div class="ph"><div class="pt">ダッシュボード</div><span style="font-size:11px;color:var(--color-text-secondary)">2025年4月13日</span></div>
+  <div class="sg4">
+    <div class="mc"><div class="ml">登録選手数</div><div class="mv">48</div><div class="ms">+2 今月</div></div>
+    <div class="mc"><div class="ml">総記録数</div><div class="mv">312</div><div class="ms">+18 今月</div></div>
+    <div class="mc"><div class="ml">登録チーム数</div><div class="mv">21</div></div>
+    <div class="mc"><div class="ml">つながり数</div><div class="mv">87</div><div class="ms">自動算出</div></div>
+  </div>
+  <div class="two">
+    <div class="card">
+      <div class="ct">最近登録した記録</div>
+      <table class="tbl">
+        <tr><th>選手</th><th>種目</th><th>記録</th></tr>
+        <tr><td class="lnk" onclick="drillAth()">田中 希実</td><td>1500m</td><td>4:02.31</td></tr>
+        <tr><td class="lnk" onclick="drillAth()">鈴木 健吾</td><td>マラソン</td><td>2:06:18</td></tr>
+        <tr><td class="lnk" onclick="drillAth()">田澤 廉</td><td>5000m</td><td>13:24.75</td></tr>
+        <tr><td class="lnk" onclick="drillAth()">設楽 悠太</td><td>マラソン</td><td>2:07:45</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="ct">直近の大会</div>
+      <table class="tbl">
+        <tr><th>大会名</th><th>種別</th><th>日付</th></tr>
+        <tr><td class="lnk" onclick="sw('watch',document.querySelector('.ntab:nth-child(7)'))">箱根駅伝 2025</td><td><span class="bdg bp">駅伝</span></td><td>1/2</td></tr>
+        <tr><td>東京マラソン 2025</td><td><span class="bdg bb">個人</span></td><td>3/16</td></tr>
+        <tr><td>大阪マラソン 2025</td><td><span class="bdg bb">個人</span></td><td>3/2</td></tr>
+        <tr><td>日本選手権 1500m</td><td><span class="bdg bb">個人</span></td><td>2/8</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ② 選手（一覧→詳細ドリルダウン） -->
+<div class="sc" id="sc-ath">
+  <div id="ath-list">
+    <div class="ph"><div class="pt">選手</div><button class="btn btnp">+ 選手を追加</button></div>
+    <div class="sb">
+      <input type="text" placeholder="氏名で検索...">
+      <select><option>全種目</option><option>マラソン</option><option>1500m</option><option>5000m</option><option>10000m</option></select>
+      <select><option>全所属</option><option>富士通</option><option>Honda</option><option>トヨタ</option></select>
+      <select><option>出身校で絞り込み</option><option>仙台育英</option><option>早稲田大学</option><option>東洋大学</option></select>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="tbl">
+        <colgroup><col style="width:20%"><col style="width:12%"><col style="width:13%"><col style="width:13%"><col style="width:14%"><col style="width:12%"><col style="width:16%"></colgroup>
+        <tr><th>氏名</th><th>生年月日</th><th>出身高校</th><th>出身大学</th><th>所属</th><th>主種目</th><th>自己ベスト</th></tr>
+        <tr><td class="lnk" onclick="drillAth()">田中 希実</td><td>2000/9/20</td><td>西脇工業</td><td>—</td><td>NB Japan</td><td><span class="bdg bb">1500m</span></td><td>4:02.31</td></tr>
+        <tr><td class="lnk" onclick="drillAth()">鈴木 健吾</td><td>1996/8/16</td><td>九州学院</td><td>早稲田大学</td><td>富士通</td><td><span class="bdg bg">マラソン</span></td><td>2:06:18</td></tr>
+        <tr><td class="lnk" onclick="drillAth()">設楽 悠太</td><td>1993/12/18</td><td>埼玉栄</td><td>東洋大学</td><td>Honda</td><td><span class="bdg bg">マラソン</span></td><td>2:06:11</td></tr>
+        <tr><td class="lnk" onclick="drillAth()">相澤 晃</td><td>1996/12/10</td><td>学法石川</td><td>東洋大学</td><td>旭化成</td><td><span class="bdg ba">10000m</span></td><td>27:23.44</td></tr>
+        <tr><td class="lnk" onclick="drillAth()">田澤 廉</td><td>2001/3/4</td><td>青森山田</td><td>駒澤大学</td><td>トヨタ</td><td><span class="bdg ba">5000m</span></td><td>13:24.75</td></tr>
+      </table>
+    </div>
+  </div>
+  <div id="ath-det" style="display:none">
+    <div class="breadcrumb">
+      <span class="bc-lnk" onclick="back('ath')">選手</span>
+      <span class="bc-sep">›</span>
+      <span style="color:var(--color-text-primary)">田中 希実</span>
+    </div>
+    <div class="hd2">
+      <div class="av">田</div>
+      <div style="flex:1">
+        <div class="an">田中 希実</div>
+        <div class="am">2000年9月20日生 · 兵庫県出身 · 西脇工業高校 → NB Japan</div>
+        <div style="margin-top:5px;display:flex;gap:4px"><span class="bdg bb">1500m</span><span class="bdg bb">5000m</span><span class="bdg bb">3000m SC</span></div>
+      </div>
+      <button class="btn">編集</button>
+    </div>
+    <div class="bg3">
+      <div class="bc"><div class="be">1500m 自己ベスト</div><div class="bt">4:02.31</div><div class="bd">2023 世界選手権</div></div>
+      <div class="bc"><div class="be">5000m 自己ベスト</div><div class="bt">14:29.18</div><div class="bd">2024 日本選手権</div></div>
+      <div class="bc"><div class="be">今季ベスト (1500m)</div><div class="bt">4:05.44</div><div class="bd">2025 大阪インドア</div></div>
+    </div>
+    <div class="card">
+      <div class="tabs">
+        <div class="tb on" onclick="stab(this,'d-r1')">直近1年の記録</div>
+        <div class="tb" onclick="stab(this,'d-r2')">全記録</div>
+        <div class="tb" onclick="stab(this,'d-cn')">つながり</div>
+      </div>
+      <div id="d-r1">
+        <div style="font-size:10px;color:var(--color-text-secondary);margin-bottom:.45rem">2024年4月〜2025年4月</div>
+        <table class="tbl">
+          <tr><th>大会名</th><th>日付</th><th>種目</th><th>記録</th><th>順位</th></tr>
+          <tr><td>大阪インドア</td><td>2025/2/1</td><td>1500m</td><td>4:05.44</td><td>1位</td></tr>
+          <tr><td>パリ五輪</td><td>2024/8/6</td><td>1500m</td><td>4:03.81</td><td>5位</td></tr>
+          <tr><td>日本選手権</td><td>2024/6/22</td><td>5000m</td><td>14:29.18</td><td>1位</td></tr>
+          <tr><td>日本GP</td><td>2024/5/3</td><td>1500m</td><td>4:06.12</td><td>1位</td></tr>
+        </table>
+      </div>
+      <div id="d-r2" style="display:none">
+        <table class="tbl">
+          <tr><th>大会名</th><th>日付</th><th>種目</th><th>記録</th><th>順位</th></tr>
+          <tr><td>大阪インドア</td><td>2025/2/1</td><td>1500m</td><td>4:05.44</td><td>1位</td></tr>
+          <tr><td>パリ五輪</td><td>2024/8/6</td><td>1500m</td><td>4:03.81</td><td>5位</td></tr>
+          <tr><td>世界選手権</td><td>2023/8/22</td><td>1500m</td><td>4:02.31</td><td>銅</td></tr>
+          <tr><td>日本選手権</td><td>2023/6/24</td><td>1500m</td><td>4:04.77</td><td>1位</td></tr>
+          <tr><td>世界室内</td><td>2022/3/19</td><td>1500m</td><td>4:05.17</td><td>4位</td></tr>
+        </table>
+      </div>
+      <div id="d-cn" style="display:none">
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:.5rem">出身校ベースで自動算出</div>
+        <div style="font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:.3rem">西脇工業高校</div>
+        <div class="conn-row"><span class="bdg bp" style="min-width:36px;text-align:center">同期</span><span style="font-size:11px;color:#1D9E75;flex:1">守屋 春奈</span><span style="font-size:10px;color:var(--color-text-tertiary)">2001年 · マラソン</span></div>
+        <div class="conn-row"><span class="bdg bg" style="min-width:36px;text-align:center">先輩</span><span style="font-size:11px;color:#1D9E75;flex:1">坂本 久美子</span><span style="font-size:10px;color:var(--color-text-tertiary)">1998年 · 5000m</span></div>
+        <div style="font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin:.65rem 0 .3rem">NB Japan</div>
+        <div class="conn-row"><span class="bdg bp" style="min-width:36px;text-align:center">同期</span><span style="font-size:11px;color:#1D9E75;flex:1">廣中 璃梨佳</span><span style="font-size:10px;color:var(--color-text-tertiary)">2001年 · 5000m</span></div>
+        <div class="conn-row"><span class="bdg ba" style="min-width:36px;text-align:center">後輩</span><span style="font-size:11px;color:#1D9E75;flex:1">山本 有真</span><span style="font-size:10px;color:var(--color-text-tertiary)">2003年 · 1500m</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ チーム（一覧→詳細ドリルダウン） -->
+<div class="sc" id="sc-teams">
+  <div id="team-list">
+    <div class="ph"><div class="pt">チーム</div><button class="btn btnp">+ チームを追加</button></div>
+    <div class="sb">
+      <input type="text" placeholder="チーム名で検索...">
+      <select><option>全種別</option><option>実業団</option><option>大学</option><option>高校</option></select>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="tbl">
+        <colgroup><col style="width:36%"><col style="width:16%"><col style="width:24%"><col style="width:24%"></colgroup>
+        <tr><th>チーム名</th><th>種別</th><th>直近箱根順位</th><th>直近実業団成績</th></tr>
+        <tr><td class="lnk" onclick="drillTeam()">青山学院大学</td><td><span class="bdg bp">大学</span></td><td><span class="rbdg r1">1</span> 2025年</td><td>—</td></tr>
+        <tr><td class="lnk" onclick="drillTeam()">駒澤大学</td><td><span class="bdg bp">大学</span></td><td><span class="rbdg r2">2</span> 2025年</td><td>—</td></tr>
+        <tr><td class="lnk" onclick="drillTeam()">中央大学</td><td><span class="bdg bp">大学</span></td><td><span class="rbdg r3">3</span> 2025年</td><td>—</td></tr>
+        <tr><td class="lnk" onclick="drillTeam()">富士通</td><td><span class="bdg bg">実業団</span></td><td>—</td><td><span class="rbdg r1">1</span> 実業団対抗</td></tr>
+        <tr><td class="lnk" onclick="drillTeam()">Honda</td><td><span class="bdg bg">実業団</span></td><td>—</td><td><span class="rbdg r3">3</span> 実業団対抗</td></tr>
+      </table>
+    </div>
+  </div>
+  <div id="team-det" style="display:none">
+    <div class="breadcrumb">
+      <span class="bc-lnk" onclick="back('team')">チーム</span>
+      <span class="bc-sep">›</span>
+      <span style="color:var(--color-text-primary)">青山学院大学</span>
+    </div>
+    <div class="hd2">
+      <div class="ticon">青学</div>
+      <div style="flex:1">
+        <div class="an">青山学院大学</div>
+        <div class="am">大学 · 陸上競技部</div>
+        <div style="margin-top:5px;display:flex;gap:4px"><span class="bdg bp">大学</span><span class="bdg bg">箱根駅伝</span><span class="bdg bb">全日本駅伝</span></div>
+      </div>
+      <button class="btn">編集</button>
+    </div>
+    <div class="bg2">
+      <div class="bc"><div class="be">箱根 優勝回数</div><div class="bt">8回</div><div class="bd">直近2025年</div></div>
+      <div class="bc"><div class="be">全日本 優勝回数</div><div class="bt">5回</div><div class="bd">直近2024年</div></div>
+    </div>
+    <div class="card">
+      <div class="tabs">
+        <div class="tb on" onclick="stab(this,'t-m')">所属選手</div>
+        <div class="tb" onclick="stab(this,'t-e')">駅伝成績</div>
+        <div class="tb" onclick="stab(this,'t-r')">マラソン団体</div>
+      </div>
+      <div id="t-m">
+        <table class="tbl">
+          <colgroup><col style="width:28%"><col style="width:12%"><col style="width:18%"><col style="width:22%"><col style="width:20%"></colgroup>
+          <tr><th>氏名</th><th>学年</th><th>主種目</th><th>自己ベスト</th><th>直近記録</th></tr>
+          <tr><td class="lnk" onclick="drillAth()">黒田 朝日</td><td>3年</td><td><span class="bdg ba">5000m</span></td><td>13:28.04</td><td>13:31.22</td></tr>
+          <tr><td class="lnk" onclick="drillAth()">鶴川 正也</td><td>4年</td><td><span class="bdg ba">10000m</span></td><td>27:30.31</td><td>28:02.11</td></tr>
+          <tr><td class="lnk" onclick="drillAth()">荒巻 朋熙</td><td>2年</td><td><span class="bdg bb">1500m</span></td><td>3:44.21</td><td>3:46.55</td></tr>
+          <tr><td class="lnk" onclick="drillAth()">田中 悠登</td><td>4年</td><td><span class="bdg ba">10000m</span></td><td>27:51.44</td><td>28:15.03</td></tr>
+        </table>
+      </div>
+      <div id="t-e" style="display:none">
+        <div style="font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:.3rem">箱根駅伝 順位変遷</div>
+        <div class="rank-hist">
+          <div class="rh-col"><div class="rh-bw"><div class="rh-b" style="height:40%"></div></div><div class="rh-r">3位</div><div class="rh-y">2021</div></div>
+          <div class="rh-col"><div class="rh-bw"><div class="rh-b" style="height:100%"></div></div><div class="rh-r">1位</div><div class="rh-y">2022</div></div>
+          <div class="rh-col"><div class="rh-bw"><div class="rh-b" style="height:20%"></div></div><div class="rh-r">6位</div><div class="rh-y">2023</div></div>
+          <div class="rh-col"><div class="rh-bw"><div class="rh-b" style="height:100%"></div></div><div class="rh-r">1位</div><div class="rh-y">2024</div></div>
+          <div class="rh-col"><div class="rh-bw"><div class="rh-b" style="height:100%"></div></div><div class="rh-r">1位</div><div class="rh-y">2025</div></div>
+        </div>
+        <table class="tbl" style="margin-top:.35rem">
+          <colgroup><col style="width:38%"><col style="width:18%"><col style="width:14%"><col style="width:30%"></colgroup>
+          <tr><th>大会名</th><th>年</th><th>順位</th><th>合計タイム</th></tr>
+          <tr><td>箱根駅伝</td><td>2025</td><td><span class="rbdg r1">1</span></td><td>10:41:19</td></tr>
+          <tr><td>箱根駅伝</td><td>2024</td><td><span class="rbdg r1">1</span></td><td>10:43:09</td></tr>
+          <tr><td>全日本大学駅伝</td><td>2024</td><td><span class="rbdg r1">1</span></td><td>5:09:24</td></tr>
+          <tr><td>箱根駅伝</td><td>2023</td><td><span class="rbdg rn">6</span></td><td>10:54:07</td></tr>
+        </table>
+      </div>
+      <div id="t-r" style="display:none">
+        <div style="color:var(--color-text-tertiary);font-size:11px;padding:.7rem 0;text-align:center">団体戦記録はまだ登録されていません</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ④ ランキング -->
+<div class="sc" id="sc-rank">
+  <div class="ph"><div class="pt">ランキング</div></div>
+  <div class="sb">
+    <select><option>マラソン（男子）</option><option>マラソン（女子）</option><option>1500m（女子）</option><option>5000m（男子）</option></select>
+    <select><option>全期間</option><option>2025年</option><option>2024年</option><option>2023年</option></select>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="tbl">
+      <colgroup><col style="width:8%"><col style="width:22%"><col style="width:18%"><col style="width:32%"><col style="width:20%"></colgroup>
+      <tr><th>順</th><th>選手名</th><th>記録</th><th>大会</th><th>日付</th></tr>
+      <tr><td style="font-weight:500;color:#1D9E75">1</td><td>設楽 悠太</td><td style="font-weight:500">2:06:11</td><td>東京マラソン 2018</td><td>2018/2/25</td></tr>
+      <tr><td style="font-weight:500;color:#5DCAA5">2</td><td>鈴木 健吾</td><td style="font-weight:500">2:06:18</td><td>びわ湖毎日 2021</td><td>2021/2/28</td></tr>
+      <tr><td style="color:var(--color-text-secondary)">3</td><td>中村 匠吾</td><td>2:07:19</td><td>福岡国際 2019</td><td>2019/12/1</td></tr>
+      <tr><td style="color:var(--color-text-secondary)">4</td><td>山下 一貴</td><td>2:07:35</td><td>東京マラソン 2023</td><td>2023/3/5</td></tr>
+      <tr><td style="color:var(--color-text-secondary)">5</td><td>大迫 傑</td><td>2:05:50</td><td>Chicago 2018</td><td>2018/10/7</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ⑤ 記録取り込み -->
+<div class="sc" id="sc-imp">
+  <div class="ph"><div class="pt">記録取り込み</div></div>
+  <div class="step"><div class="sn">1</div><div><div class="sd">CSVをアップロード</div><div class="ss">自分で作成したCSVファイルをアップロードしてください</div></div></div>
+  <div class="step"><div class="sn" style="background:var(--color-border-secondary);color:var(--color-text-secondary)">2</div><div><div class="sd">内容を確認して登録</div><div class="ss">プレビューで内容を確認し、OKなら取り込み実行</div></div></div>
+  <div class="upload-box">
+    <div style="font-size:20px;color:var(--color-text-tertiary);margin-bottom:.4rem">↑</div>
+    <div class="upload-text">CSVファイルをここにドロップ、またはクリックして選択</div>
+    <div class="upload-hint">テンプレートは<span style="color:#1D9E75;cursor:pointer">こちら</span>からダウンロード</div>
+  </div>
+  <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:.5rem">CSVフォーマット（例）</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="tbl">
+      <colgroup><col style="width:18%"><col style="width:14%"><col style="width:14%"><col style="width:24%"><col style="width:14%"><col style="width:16%"></colgroup>
+      <tr><th>選手名</th><th>種目</th><th>記録</th><th>大会名</th><th>日付</th><th>順位（任意）</th></tr>
+      <tr><td style="color:var(--color-text-tertiary)">鈴木 健吾</td><td style="color:var(--color-text-tertiary)">マラソン</td><td style="color:var(--color-text-tertiary)">2:06:18</td><td style="color:var(--color-text-tertiary)">びわ湖毎日マラソン</td><td style="color:var(--color-text-tertiary)">2021/2/28</td><td style="color:var(--color-text-tertiary)">1</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ⑥ 観戦セットアップ -->
+<div class="sc" id="sc-setup">
+  <div class="ph"><div class="pt">観戦セットアップ</div></div>
+  <div class="card">
+    <div class="ct">ステップ 1 — レース種別を選択</div>
+    <div class="type-sel">
+      <div class="type-card" id="tp-track" onclick="selType('track')">
+        <div class="type-label">トラック / マラソン</div>
+        <div class="type-desc">個人レース。出場選手をDBから選択</div>
+      </div>
+      <div class="type-card on" id="tp-eki" onclick="selType('ekiden')">
+        <div class="type-label">駅伝</div>
+        <div class="type-desc">チームレース。出場チームをDBから選択</div>
+      </div>
+    </div>
+  </div>
+  <div id="st-track" style="display:none">
+    <div class="card">
+      <div class="ct">ステップ 2 — 出場選手を選択</div>
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:.65rem">DBに登録されている選手から出場者を選んでください</div>
+      <div class="sb"><input type="text" placeholder="選手名で絞り込み..."><select><option>全種目</option><option>マラソン</option><option>5000m</option></select></div>
+      <div class="chk-row sel" onclick="togChk(this)"><div class="chk on">✓</div><div style="flex:1"><span style="font-size:11px;font-weight:500">鈴木 健吾</span><span style="font-size:10px;color:var(--color-text-secondary);margin-left:6px">富士通 · マラソン PB 2:06:18</span></div></div>
+      <div class="chk-row sel" onclick="togChk(this)"><div class="chk on">✓</div><div style="flex:1"><span style="font-size:11px;font-weight:500">設楽 悠太</span><span style="font-size:10px;color:var(--color-text-secondary);margin-left:6px">Honda · マラソン PB 2:06:11</span></div></div>
+      <div class="chk-row" onclick="togChk(this)"><div class="chk"></div><div style="flex:1"><span style="font-size:11px;font-weight:500">山下 一貴</span><span style="font-size:10px;color:var(--color-text-secondary);margin-left:6px">三菱重工 · マラソン PB 2:07:35</span></div></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:.75rem">
+        <button class="btn btnp" onclick="goWatch('per')">観戦モードへ →</button>
+      </div>
+    </div>
+  </div>
+  <div id="st-eki">
+    <div class="card">
+      <div class="ct">ステップ 2 — 出場チームを選択</div>
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:.65rem">DBに登録されているチームから出場チームを選んでください</div>
+      <div class="chk-row sel" onclick="togChk(this)"><div class="chk on">✓</div><div style="flex:1"><span style="font-size:11px;font-weight:500">青山学院大学</span><span style="font-size:10px;color:var(--color-text-secondary);margin-left:6px">大学 · 箱根2025: 1位</span></div></div>
+      <div class="chk-row sel" onclick="togChk(this)"><div class="chk on">✓</div><div style="flex:1"><span style="font-size:11px;font-weight:500">駒澤大学</span><span style="font-size:10px;color:var(--color-text-secondary);margin-left:6px">大学 · 箱根2025: 2位</span></div></div>
+      <div class="chk-row sel" onclick="togChk(this)"><div class="chk on">✓</div><div style="flex:1"><span style="font-size:11px;font-weight:500">中央大学</span><span style="font-size:10px;color:var(--color-text-secondary);margin-left:6px">大学 · 箱根2025: 3位</span></div></div>
+      <div class="chk-row" onclick="togChk(this)"><div class="chk"></div><div style="flex:1"><span style="font-size:11px;font-weight:500">国学院大学</span><span style="font-size:10px;color:var(--color-text-secondary);margin-left:6px">大学 · 箱根2025: 4位</span></div></div>
+    </div>
+    <div class="card">
+      <div class="ct">ステップ 3 — 区間選手を割り当て</div>
+      <div style="font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:.4rem">青山学院大学</div>
+      <table class="tbl" style="margin-bottom:.75rem">
+        <colgroup><col style="width:12%"><col style="width:38%"><col style="width:50%"></colgroup>
+        <tr><th>区間</th><th>選手</th><th>参考記録</th></tr>
+        <tr><td>1区</td><td class="lnk">黒田 朝日</td><td style="color:var(--color-text-secondary)">5000m 13:28 / H 61:44</td></tr>
+        <tr><td>2区</td><td class="lnk">荒巻 朋熙</td><td style="color:var(--color-text-secondary)">5000m 13:44 / H 62:11</td></tr>
+        <tr><td>3区</td><td style="color:var(--color-text-tertiary)">— 未割り当て</td><td></td></tr>
+        <tr><td>4区</td><td style="color:var(--color-text-tertiary)">— 未割り当て</td><td></td></tr>
+        <tr><td>5区</td><td style="color:var(--color-text-tertiary)">— 未割り当て</td><td></td></tr>
+      </table>
+      <div style="font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:.4rem">駒澤大学</div>
+      <table class="tbl" style="margin-bottom:.75rem">
+        <colgroup><col style="width:12%"><col style="width:38%"><col style="width:50%"></colgroup>
+        <tr><th>区間</th><th>選手</th><th>参考記録</th></tr>
+        <tr><td>1区</td><td class="lnk">篠原 倖太朗</td><td style="color:var(--color-text-secondary)">5000m 13:22 / H 61:10</td></tr>
+        <tr><td>2区</td><td style="color:var(--color-text-tertiary)">— 未割り当て</td><td></td></tr>
+        <tr><td>3区</td><td style="color:var(--color-text-tertiary)">— 未割り当て</td><td></td></tr>
+        <tr><td>4区</td><td style="color:var(--color-text-tertiary)">— 未割り当て</td><td></td></tr>
+        <tr><td>5区</td><td style="color:var(--color-text-tertiary)">— 未割り当て</td><td></td></tr>
+      </table>
+      <div style="display:flex;justify-content:flex-end">
+        <button class="btn btnp" onclick="goWatch('eki')">観戦モードへ →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑦ 観戦モード -->
+<div class="sc" id="sc-watch">
+  <div class="watch-hd">
+    <div id="watch-title">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">観戦モード — 駅伝</div>
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px">出場チーム 3チーム</div>
+    </div>
+    <button class="btn" onclick="sw('setup',document.querySelector('.ntab:nth-child(6)'))">← セットアップに戻る</button>
+  </div>
+
+  <div id="w-eki">
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:.6rem">区間を選ぶと各チームの担当選手を比較できます</div>
+    <div class="seg-sel">
+      <div class="seg-btn on" onclick="selSeg(this)">全チーム</div>
+      <div class="seg-btn" onclick="selSeg(this)">1区</div>
+      <div class="seg-btn" onclick="selSeg(this)">2区</div>
+      <div class="seg-btn" onclick="selSeg(this)">3区</div>
+      <div class="seg-btn" onclick="selSeg(this)">4区</div>
+      <div class="seg-btn" onclick="selSeg(this)">5区</div>
+    </div>
+    <div id="eki-all">
+      <div class="tblk">
+        <div class="tblk-hd" onclick="tog('e1')"><div style="display:flex;align-items:center;gap:7px"><span class="rbdg r1">1</span><span class="tblk-name">青山学院大学</span></div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:10px;color:var(--color-text-secondary)">箱根: 1位・1位・6位</span><span style="font-size:12px;color:var(--color-text-tertiary);transition:transform .15s" id="c-e1">›</span></div></div>
+        <div class="collapse open" id="b-e1">
+          <div class="past-bar"><span class="pb-item">2025: <b style="color:#0F6E56">1位</b></span><span class="pb-item">2024: <b style="color:#0F6E56">1位</b></span><span class="pb-item">2023: <b>6位</b></span><span class="pb-item">2022: <b style="color:#0F6E56">1位</b></span></div>
+          <div class="tblk-body">
+            <div class="leg-row"><div class="leg-n">1区</div><div class="leg-nm">黒田 朝日</div><div class="leg-sch">大牟田高校</div><div class="leg-rec">5000m 13:28 / H 61:44</div></div>
+            <div class="leg-row"><div class="leg-n">2区</div><div class="leg-nm">荒巻 朋熙</div><div class="leg-sch">八千代松陰</div><div class="leg-rec">5000m 13:44 / H 62:11</div></div>
+            <div class="leg-row"><div class="leg-n">3区</div><div class="leg-nm">鶴川 正也</div><div class="leg-sch">八千代松陰</div><div class="leg-rec">10000m 27:30 / H 61:55</div></div>
+            <div class="leg-row"><div class="leg-n">4区</div><div class="leg-nm">田中 悠登</div><div class="leg-sch">洛南高校</div><div class="leg-rec">10000m 27:51 / H 62:44</div></div>
+            <div class="leg-row"><div class="leg-n">5区</div><div class="leg-nm">若林 宏樹</div><div class="leg-sch">奈良産業大付属</div><div class="leg-rec">5000m 13:45 / H 63:20</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tblk">
+        <div class="tblk-hd" onclick="tog('e2')"><div style="display:flex;align-items:center;gap:7px"><span class="rbdg r2">2</span><span class="tblk-name">駒澤大学</span></div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:10px;color:var(--color-text-secondary)">箱根: 2位・1位・2位</span><span style="font-size:12px;color:var(--color-text-tertiary)" id="c-e2">›</span></div></div>
+        <div class="collapse" id="b-e2">
+          <div class="past-bar"><span class="pb-item">2025: <b>2位</b></span><span class="pb-item">2024: <b style="color:#0F6E56">1位</b></span><span class="pb-item">2023: <b>2位</b></span></div>
+          <div class="tblk-body">
+            <div class="leg-row"><div class="leg-n">1区</div><div class="leg-nm">篠原 倖太朗</div><div class="leg-sch">愛知高校</div><div class="leg-rec">5000m 13:22 / H 61:10</div></div>
+            <div class="leg-row"><div class="leg-n">2区</div><div class="leg-nm">山川 拓馬</div><div class="leg-sch">上伊那農業</div><div class="leg-rec">5000m 13:30 / H 61:44</div></div>
+            <div class="leg-row"><div class="leg-n">3区</div><div class="leg-nm">鈴木 芽吹</div><div class="leg-sch">佐久長聖</div><div class="leg-rec">10000m 27:32 / H 61:22</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tblk">
+        <div class="tblk-hd" onclick="tog('e3')"><div style="display:flex;align-items:center;gap:7px"><span class="rbdg r3">3</span><span class="tblk-name">中央大学</span></div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:10px;color:var(--color-text-secondary)">箱根: 3位・5位・4位</span><span style="font-size:12px;color:var(--color-text-tertiary)" id="c-e3">›</span></div></div>
+        <div class="collapse" id="b-e3">
+          <div class="tblk-body">
+            <div class="leg-row"><div class="leg-n">1区</div><div class="leg-nm">吉居 大和</div><div class="leg-sch">仙台育英</div><div class="leg-rec">5000m 13:08 / H 60:34</div></div>
+            <div class="leg-row"><div class="leg-n">2区</div><div class="leg-nm">吉居 駿恭</div><div class="leg-sch">仙台育英</div><div class="leg-rec">5000m 13:22 / H 61:05</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="eki-seg" style="display:none">
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:.5rem" id="seg-lbl">1区 — 各チームの担当選手</div>
+      <div class="cmp-grid">
+        <div class="cmp-card"><div class="cmp-name">黒田 朝日</div><div class="cmp-team">青山学院 / 1区</div><div class="cmp-item">5000m PB: <b>13:28.04</b></div><div class="cmp-item">ハーフ: <b>61:44</b></div><div class="cmp-item">出身: <b>大牟田高校</b></div></div>
+        <div class="cmp-card"><div class="cmp-name">篠原 倖太朗</div><div class="cmp-team">駒澤大学 / 1区</div><div class="cmp-item">5000m PB: <b>13:22.11</b></div><div class="cmp-item">ハーフ: <b>61:10</b></div><div class="cmp-item">出身: <b>愛知高校</b></div></div>
+        <div class="cmp-card"><div class="cmp-name">吉居 大和</div><div class="cmp-team">中央大学 / 1区</div><div class="cmp-item">5000m PB: <b>13:08.74</b></div><div class="cmp-item">ハーフ: <b>60:34</b></div><div class="cmp-item">出身: <b>仙台育英</b></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="w-per" style="display:none">
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:.6rem">エントリー選手の記録を比較できます。選手名をタップで詳細へ。</div>
+    <div class="cmp-grid" style="grid-template-columns:1fr 1fr;margin-bottom:.85rem">
+      <div class="cmp-card"><div class="cmp-name">鈴木 健吾</div><div class="cmp-team">富士通</div><div style="margin-top:.35rem"><div class="cmp-item">マラソン PB: <b>2:06:18</b></div><div class="cmp-item">直近 2024/11: <b>2:07:04</b></div><div class="cmp-item">直近 2024/3: <b>2:08:21</b></div><div class="cmp-item" style="margin-top:.3rem">出身大: <b>早稲田大学</b></div></div></div>
+      <div class="cmp-card"><div class="cmp-name">設楽 悠太</div><div class="cmp-team">Honda</div><div style="margin-top:.35rem"><div class="cmp-item">マラソン PB: <b>2:06:11</b></div><div class="cmp-item">直近 2024/9: <b>2:08:03</b></div><div class="cmp-item" style="color:var(--color-text-tertiary)">直近 —</div><div class="cmp-item" style="margin-top:.3rem">出身大: <b>東洋大学</b></div></div></div>
+    </div>
+    <div style="font-size:11px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:.4rem">全エントリー選手の記録一覧</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="tbl">
+        <colgroup><col style="width:24%"><col style="width:18%"><col style="width:58%"></colgroup>
+        <tr><th>選手名</th><th>所属</th><th>直近1年の記録</th></tr>
+        <tr><td class="lnk" onclick="drillAth()">鈴木 健吾</td><td>富士通</td><td style="white-space:normal;line-height:1.7"><span style="color:var(--color-text-secondary)">2024/11:</span> 2:07:04　<span style="color:var(--color-text-secondary)">2024/3:</span> 2:08:21</td></tr>
+        <tr><td class="lnk" onclick="drillAth()">設楽 悠太</td><td>Honda</td><td style="white-space:normal;line-height:1.7"><span style="color:var(--color-text-secondary)">2024/9:</span> 2:08:03</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+function sw(id,tab){
+  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
+  document.getElementById('sc-'+id).classList.add('on');
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  if(tab)tab.classList.add('on');
+}
+function drillAth(){
+  sw('ath',document.querySelector('.ntab:nth-child(2)'));
+  document.getElementById('ath-list').style.display='none';
+  document.getElementById('ath-det').style.display='block';
+}
+function drillTeam(){
+  sw('teams',document.querySelector('.ntab:nth-child(3)'));
+  document.getElementById('team-list').style.display='none';
+  document.getElementById('team-det').style.display='block';
+}
+function back(type){
+  if(type==='ath'){
+    document.getElementById('ath-list').style.display='block';
+    document.getElementById('ath-det').style.display='none';
+  } else {
+    document.getElementById('team-list').style.display='block';
+    document.getElementById('team-det').style.display='none';
+  }
+}
+function stab(el,tid){
+  el.closest('.card').querySelectorAll('.tb').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  ['d-r1','d-r2','d-cn','t-m','t-e','t-r'].forEach(i=>{const e=document.getElementById(i);if(e)e.style.display='none'});
+  document.getElementById(tid).style.display='block';
+}
+function selType(t){
+  document.getElementById('tp-track').classList.toggle('on',t==='track');
+  document.getElementById('tp-eki').classList.toggle('on',t==='ekiden');
+  document.getElementById('st-track').style.display=t==='track'?'block':'none';
+  document.getElementById('st-eki').style.display=t==='ekiden'?'block':'none';
+}
+function togChk(row){
+  row.classList.toggle('sel');
+  const c=row.querySelector('.chk');
+  c.classList.toggle('on');
+  c.textContent=c.classList.contains('on')?'✓':'';
+}
+function goWatch(mode){
+  sw('watch',document.querySelector('.ntab:nth-child(7)'));
+  document.getElementById('w-eki').style.display=mode==='eki'?'block':'none';
+  document.getElementById('w-per').style.display=mode==='per'?'block':'none';
+  const t=document.getElementById('watch-title');
+  t.innerHTML=mode==='eki'
+    ?'<div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">観戦モード — 駅伝</div><div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px">出場チーム 3チーム</div>'
+    :'<div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">観戦モード — トラック / マラソン</div><div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px">エントリー 2名</div>';
+}
+function tog(id){
+  const b=document.getElementById('b-'+id);
+  const c=document.getElementById('c-'+id);
+  const open=b.classList.toggle('open');
+  if(c)c.style.transform=open?'rotate(90deg)':'';
+}
+function selSeg(el){
+  document.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  const isAll=el.textContent==='全チーム';
+  document.getElementById('eki-all').style.display=isAll?'block':'none';
+  document.getElementById('eki-seg').style.display=isAll?'none':'block';
+  if(!isAll)document.getElementById('seg-lbl').textContent=el.textContent+' — 各チームの担当選手';
+}
+</script>
