@@ -37,9 +37,6 @@ export async function GET(
   try {
     const team = await prisma.team.findUnique({
       where: { id: params.id },
-      include: {
-        results: { orderBy: { year: "desc" } },
-      },
     });
     if (!team) return NextResponse.json({ error: "Not found" }, { status: 404 });
 

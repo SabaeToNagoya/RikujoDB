@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 import { timeStringToSeconds } from "@/lib/timeUtils";
 
 // CSVフォーマット:
-// 選手名,種目,記録,大会名,日付,所属チーム名（任意）,順位（任意）,備考（任意）
+// 選手名,種目,記録,大会名,日付,所属チーム名（任意）,区間（任意）,メモ（任意）
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       continue;
     }
 
-    const [athleteName, event, timeStr, competitionName, dateStr, teamNameRaw, rankingRaw, notesRaw] = row;
+    const [athleteName, event, timeStr, competitionName, dateStr, teamNameRaw, segmentRaw, notesRaw] = row;
 
     if (!athleteName || !event || !timeStr || !competitionName || !dateStr) {
       results.errors.push(`行${i + 1}: 必須項目が空です`);
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
       teamId = team?.id || null;
     }
 
-    // 重複チェック（同選手・同種目・同タイム・同大会）
+    // 重複チェック（同選手・同種目・同大会・同日付）
     const existing = await prisma.record.findFirst({
       where: {
         athleteId: athlete.id,
@@ -89,11 +89,11 @@ export async function POST(req: NextRequest) {
         athleteId: athlete.id,
         teamId,
         event: event.trim(),
+        segment: segmentRaw?.trim() || null,
         timeString: timeStr.trim(),
         timeSeconds: Math.round(seconds),
         competitionName: competitionName.trim(),
         date,
-        ranking: rankingRaw?.trim() || null,
         notes: notesRaw?.trim() || null,
       },
     });

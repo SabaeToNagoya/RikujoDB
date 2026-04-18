@@ -9,12 +9,12 @@ interface PreviewRow {
   competitionName: string;
   date: string;
   teamName: string;
-  ranking: string;
+  segment: string;
   notes: string;
   _raw: string[];
 }
 
-const CSV_TEMPLATE = "選手名,種目,記録,大会名,日付,所属チーム名,順位,備考\n田中 希実,1500m,4:02.31,世界選手権,2023/08/22,NB Japan,銅メダル,自己ベスト\n鈴木 健吾,マラソン,2:06:18,びわ湖毎日マラソン,2021/02/28,富士通,1,,";
+const CSV_TEMPLATE = "選手名,種目,記録,大会名,日付,所属チーム名,区間,メモ\n田中 希実,1500m,4:02.31,世界選手権,2023/08/22,NB Japan,,自己ベスト\n鈴木 健吾,駅伝,1:02:18,箱根駅伝,2021/01/02,富士通,2区,";
 
 export default function ImportPage() {
   const [preview, setPreview] = useState<PreviewRow[] | null>(null);
@@ -39,7 +39,7 @@ export default function ImportPage() {
           competitionName: row[3] || "",
           date: row[4] || "",
           teamName: row[5] || "",
-          ranking: row[6] || "",
+          segment: row[6] || "",
           notes: row[7] || "",
           _raw: row,
         }));
@@ -116,13 +116,14 @@ export default function ImportPage() {
             <table className="data-table">
               <colgroup>
                 <col style={{ width: "5%" }} />
-                <col style={{ width: "15%" }} />
+                <col style={{ width: "14%" }} />
                 <col style={{ width: "10%" }} />
                 <col style={{ width: "10%" }} />
-                <col style={{ width: "22%" }} />
+                <col style={{ width: "20%" }} />
                 <col style={{ width: "10%" }} />
-                <col style={{ width: "16%" }} />
-                <col style={{ width: "12%" }} />
+                <col style={{ width: "14%" }} />
+                <col style={{ width: "10%" }} />
+                <col style={{ width: "7%" }} />
               </colgroup>
               <thead>
                 <tr>
@@ -133,24 +134,26 @@ export default function ImportPage() {
                   <th>大会名<span style={{ color: "#e53e3e" }}>*</span></th>
                   <th>日付<span style={{ color: "#e53e3e" }}>*</span></th>
                   <th>所属チーム名</th>
-                  <th>順位</th>
+                  <th>区間</th>
+                  <th>メモ</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td style={{ color: "var(--color-text-tertiary)" }}>例</td>
                   <td style={{ color: "var(--color-text-tertiary)" }}>鈴木 健吾</td>
-                  <td style={{ color: "var(--color-text-tertiary)" }}>マラソン</td>
-                  <td style={{ color: "var(--color-text-tertiary)" }}>2:06:18</td>
-                  <td style={{ color: "var(--color-text-tertiary)" }}>びわ湖毎日マラソン</td>
-                  <td style={{ color: "var(--color-text-tertiary)" }}>2021/2/28</td>
+                  <td style={{ color: "var(--color-text-tertiary)" }}>駅伝</td>
+                  <td style={{ color: "var(--color-text-tertiary)" }}>1:02:18</td>
+                  <td style={{ color: "var(--color-text-tertiary)" }}>箱根駅伝</td>
+                  <td style={{ color: "var(--color-text-tertiary)" }}>2021/1/2</td>
                   <td style={{ color: "var(--color-text-tertiary)" }}>富士通</td>
-                  <td style={{ color: "var(--color-text-tertiary)" }}>1位</td>
+                  <td style={{ color: "var(--color-text-tertiary)" }}>2区</td>
+                  <td style={{ color: "var(--color-text-tertiary)" }}></td>
                 </tr>
               </tbody>
             </table>
             <div style={{ fontSize: "10px", color: "var(--color-text-tertiary)", marginTop: "0.5rem" }}>
-              * 必須項目。選手名はDBに登録済みの漢字氏名と一致している必要があります。
+              * 必須項目。選手名はDBに登録済みの漢字氏名と一致している必要があります。区間は駅伝のみ入力。
             </div>
           </div>
         </>
@@ -174,11 +177,11 @@ export default function ImportPage() {
           <div className="card" style={{ padding: 0, overflow: "hidden" }}>
             <table className="data-table">
               <colgroup>
-                <col style={{ width: "16%" }} /><col style={{ width: "12%" }} /><col style={{ width: "10%" }} /><col style={{ width: "22%" }} /><col style={{ width: "11%" }} /><col style={{ width: "15%" }} /><col style={{ width: "8%" }} /><col style={{ width: "6%" }} />
+                <col style={{ width: "14%" }} /><col style={{ width: "10%" }} /><col style={{ width: "10%" }} /><col style={{ width: "20%" }} /><col style={{ width: "10%" }} /><col style={{ width: "14%" }} /><col style={{ width: "10%" }} /><col style={{ width: "12%" }} />
               </colgroup>
               <thead>
                 <tr>
-                  <th>選手名</th><th>種目</th><th>記録</th><th>大会名</th><th>日付</th><th>所属チーム</th><th>順位</th><th>備考</th>
+                  <th>選手名</th><th>種目</th><th>記録</th><th>大会名</th><th>日付</th><th>所属チーム</th><th>区間</th><th>メモ</th>
                 </tr>
               </thead>
               <tbody>
@@ -190,7 +193,7 @@ export default function ImportPage() {
                     <td>{row.competitionName}</td>
                     <td style={{ color: "var(--color-text-secondary)" }}>{row.date}</td>
                     <td style={{ color: "var(--color-text-secondary)" }}>{row.teamName || "—"}</td>
-                    <td style={{ color: "var(--color-text-secondary)" }}>{row.ranking || "—"}</td>
+                    <td style={{ color: "var(--color-text-secondary)" }}>{row.segment || "—"}</td>
                     <td style={{ color: "var(--color-text-tertiary)" }}>{row.notes || "—"}</td>
                   </tr>
                 ))}

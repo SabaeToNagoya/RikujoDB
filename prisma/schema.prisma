@@ -37,7 +37,6 @@ model Team {
 
   athletes  Athlete[]    @relation("AthleteTeam") // このチームに所属する選手
   records   Record[]     // このチームに紐づく記録
-  results   TeamResult[]
 
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
@@ -51,28 +50,12 @@ model Record {
   teamId          String?   // 記録当時の所属チームID（任意）
   team            Team?     @relation(fields: [teamId], references: [id], onDelete: SetNull)
   event           String    // 種目
+  segment         String?   // 区間（駅伝のみ: "1区", "2区" など）
   timeString      String    // タイム（表示用: 2:06:35）
   timeSeconds     Int       // タイム（ソート用: 秒換算）
   competitionName String    // 大会名
   date            DateTime  // 開催日
-  ranking         String?   // 順位（任意: "1位", "銅", "5位" など）
-  notes           String?   // 備考（自己ベスト・区間新など）
-
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-}
-
-// チーム成績
-model TeamResult {
-  id              String    @id @default(cuid())
-  teamId          String
-  team            Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  competitionName String    // 大会名
-  type            String    // 駅伝 / マラソン団体戦 等
-  year            Int       // 開催年
-  ranking         Int       // 順位
-  totalTime       String?   // 合計タイム
-  notes           String?
+  notes           String?   // メモ
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
