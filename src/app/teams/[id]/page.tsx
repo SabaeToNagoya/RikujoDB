@@ -8,10 +8,7 @@ interface TeamAthlete {
   id: string;
   nameKanji: string;
   dateOfBirth: string | null;
-  gender: string;
   team: { id: string; name: string } | null;
-  highSchool?: string | null;
-  university?: string | null;
   mainEvent: string | null;
   bestByEvent: Record<string, string>;
 }
@@ -30,8 +27,9 @@ interface TeamDetail {
   type: string;
   notes: string | null;
   results: TeamResult[];
-  currentAthletes: TeamAthlete[];
-  formerAthletes: TeamAthlete[];
+  currentAthletes?: TeamAthlete[];
+  formerAthletes?: TeamAthlete[];
+  error?: string;
 }
 
 const RESULT_TYPES = ["駅伝", "マラソン団体戦", "実業団対抗", "その他"];
@@ -196,7 +194,16 @@ export default function TeamDetailPage() {
   const [saving, setSaving] = useState(false);
 
   const reload = () =>
-    fetch(`/api/teams/${id}`).then((r) => r.json()).then(setTeam);
+    fetch(`/api/teams/${id}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.error && !data.id) {
+          console.error("API error:", data);
+        } else {
+          setTeam(data);
+        }
+      })
+      .catch((e) => console.error("fetch error:", e));
 
   useEffect(() => {
     reload();
@@ -259,10 +266,10 @@ export default function TeamDetailPage() {
     );
   }
 
-  const ekidenResults = team.results
+  const ekidenResults = (team.results ?? [])
     .filter((r) => r.type === "駅伝")
     .sort((a, b) => b.year - a.year);
-  const marathonResults = team.results
+  const marathonResults = (team.results ?? [])
     .filter((r) => r.type !== "駅伝")
     .sort((a, b) => b.year - a.year);
   const typeBadge =
