@@ -23,19 +23,13 @@ export async function GET(
 
   if (!athlete) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  // 種目別自己ベスト・シーズンベスト
+  // 種目別自己ベスト（駅伝は除外）
   const bestByEvent: Record<string, { timeString: string; timeSeconds: number; competitionName: string; date: Date }> = {};
-  const currentYear = new Date().getFullYear();
-  const seasonBestByEvent: Record<string, { timeString: string; timeSeconds: number }> = {};
 
   athlete.records.forEach((r) => {
+    if (r.event.includes("駅伝")) return;
     if (!bestByEvent[r.event] || r.timeSeconds < bestByEvent[r.event].timeSeconds) {
       bestByEvent[r.event] = { timeString: r.timeString, timeSeconds: r.timeSeconds, competitionName: r.competitionName, date: r.date };
-    }
-    if (new Date(r.date).getFullYear() === currentYear) {
-      if (!seasonBestByEvent[r.event] || r.timeSeconds < seasonBestByEvent[r.event].timeSeconds) {
-        seasonBestByEvent[r.event] = { timeString: r.timeString, timeSeconds: r.timeSeconds };
-      }
     }
   });
 
@@ -77,7 +71,7 @@ export async function GET(
     });
   }
 
-  return NextResponse.json({ ...athlete, bestByEvent, seasonBestByEvent, connections });
+  return NextResponse.json({ ...athlete, bestByEvent, connections });
 }
 
 export async function PUT(

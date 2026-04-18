@@ -48,17 +48,19 @@ export async function GET(req: NextRequest) {
 
   // 主種目・自己ベストを付加
   const result = filtered.map((a) => {
-    // 主種目: 記録の中で最も多い種目
+    // 主種目: 駅伝を除いた記録の中で最も多い種目
     const eventCounts: Record<string, number> = {};
     a.records.forEach((r) => {
+      if (r.event.includes("駅伝")) return;
       eventCounts[r.event] = (eventCounts[r.event] || 0) + 1;
     });
     const mainEvent =
       Object.entries(eventCounts).sort((x, y) => y[1] - x[1])[0]?.[0] || null;
 
-    // 自己ベスト: 各種目の最小タイム
+    // 自己ベスト: 駅伝を除いた各種目の最小タイム
     const bestByEvent: Record<string, { timeString: string; timeSeconds: number }> = {};
     a.records.forEach((r) => {
+      if (r.event.includes("駅伝")) return;
       if (!bestByEvent[r.event] || r.timeSeconds < bestByEvent[r.event].timeSeconds) {
         bestByEvent[r.event] = { timeString: r.timeString, timeSeconds: r.timeSeconds };
       }
