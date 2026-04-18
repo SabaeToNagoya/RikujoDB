@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { EVENTS } from "@/lib/timeUtils";
 
 interface Athlete {
@@ -27,8 +27,11 @@ interface TeamSetupItem {
 
 const NUM_SEGMENTS = 10;
 
-export default function WatchingSetupPage() {
+function WatchingSetupContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("editId");
+
   const [raceType, setRaceType] = useState<"individual" | "ekiden">("ekiden");
   const [athletes, setAthletes] = useState<Athlete[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
@@ -40,14 +43,37 @@ export default function WatchingSetupPage() {
   const [segmentCount, setSegmentCount] = useState(5);
   const [setupName, setSetupName] = useState("");
   const [saving, setSaving] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(!!editId);
 
   useEffect(() => {
     fetch("/api/athletes").then((r) => r.json()).then(setAthletes);
     fetch("/api/teams").then((r) => r.json()).then(setTeams);
   }, []);
 
+  // 編集モード: 既存データを読み込んでフォームに反映
+  useEffect(() => {
+    if (!editId) return;
+    fetch(`/api/watching-setup/${editId}`)
+      .then((r) => r.json())
+      .then((data) => {
+        setSetupName(data.name || "");
+        setRaceType(data.type as "individual" | "ekiden");
+        const ids: string[] = JSON.parse(data.athleteIds || "[]");
+        setSelectedAthleteIds(new Set(ids));
+        if (data.teamSetup) {
+          const ts: TeamSetupItem[] = JSON.parse(data.teamSetup);
+          setSelectedTeamIds(new Set(ts.map((t) => t.teamId)));
+          setTeamSetup(ts);
+          if (ts.length > 0) setSegmentCount(ts[0].segments.length);
+        }
+        setLoadingEdit(false);
+      });
+  }, [editId]);
+
   // チーム選択変更時にteamSetupを更新
   useEffect(() => {
+    // teamsがまだ読み込まれていない場合はスキップ（編集データとの競合防止）
+    if (teams.length === 0) return;
     setTeamSetup((prev) => {
       const newSetup: TeamSetupItem[] = [];
       selectedTeamIds.forEach((tid) => {
@@ -101,7 +127,9 @@ export default function WatchingSetupPage() {
       athleteIds: Array.from(selectedAthleteIds),
       teamSetup: raceType === "ekiden" ? teamSetup : null,
     };
-    const res = await fetch("/api/watching-setup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const url = editId ? `/api/watching-setup/${editId}` : "/api/watching-setup";
+    const method = editId ? "PUT" : "POST";
+    const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     const saved = await res.json();
     setSaving(false);
     router.push(`/watching?setupId=${saved.id}`);
@@ -113,9 +141,15 @@ export default function WatchingSetupPage() {
     return nameMatch && eventMatch;
   });
 
+  if (loadingEdit) {
+    return <div style={{ padding: "2rem", textAlign: "center", fontSize: "12px", color: "var(--color-text-tertiary)" }}>読み込み中...</div>;
+  }
+
   return (
     <>
-      <div className="page-header"><div className="page-title">観戦セットアップ</div></div>
+      <div className="page-header">
+        <div className="page-title">{editId ? "観戦セットアップ（編集中）" : "観戦セットアップ"}</div>
+      </div>
 
       {/* セットアップ名 */}
       <div style={{ marginBottom: "0.9rem" }}>
@@ -264,9 +298,17 @@ export default function WatchingSetupPage() {
           onClick={handleSave}
           disabled={saving || (raceType === "individual" ? selectedAthleteIds.size === 0 : selectedTeamIds.size === 0)}
         >
-          {saving ? "保存中..." : "観戦モードへ →"}
+          {saving ? "保存中..." : editId ? "更新して観戦モードへ →" : "観戦モードへ →"}
         </button>
       </div>
     </>
+  );
+}
+
+export default function WatchingSetupPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: "2rem", textAlign: "center", fontSize: "12px", color: "var(--color-text-tertiary)" }}>読み込み中...</div>}>
+      <WatchingSetupContent />
+    </Suspense>
   );
 }

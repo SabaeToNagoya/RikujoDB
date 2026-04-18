@@ -129,6 +129,12 @@ function WatchingContent() {
     });
   };
 
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`「${name}」を削除しますか？`)) return;
+    await fetch(`/api/watching-setup/${id}`, { method: "DELETE" });
+    setSetupList((prev) => prev.filter((s) => s.id !== id));
+  };
+
   // セットアップ未選択
   if (!setupId) {
     return (
@@ -143,14 +149,26 @@ function WatchingContent() {
             </div>
           ) : (
             setupList.map((s) => (
-              <div key={s.id} className="check-row" onClick={() => router.push(`/watching?setupId=${s.id}`)}>
-                <div style={{ flex: 1 }}>
+              <div key={s.id} className="check-row" style={{ alignItems: "center" }}>
+                <div style={{ flex: 1, cursor: "pointer" }} onClick={() => router.push(`/watching?setupId=${s.id}`)}>
                   <span style={{ fontSize: "12px", fontWeight: 500 }}>{s.name}</span>
                   <span style={{ fontSize: "10px", color: "var(--color-text-secondary)", marginLeft: "8px" }}>
                     {s.type === "individual" ? "個人レース" : "駅伝"} · {formatDate(s.updatedAt)}
                   </span>
                 </div>
-                <span style={{ fontSize: "11px", color: "#1D9E75" }}>→</span>
+                <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
+                  <button
+                    className="btn"
+                    style={{ fontSize: "10px", padding: "2px 8px" }}
+                    onClick={(e) => { e.stopPropagation(); router.push(`/watching-setup?editId=${s.id}`); }}
+                  >編集</button>
+                  <button
+                    className="btn"
+                    style={{ fontSize: "10px", padding: "2px 8px", color: "#e55" , borderColor: "#e55" }}
+                    onClick={(e) => { e.stopPropagation(); handleDelete(s.id, s.name); }}
+                  >削除</button>
+                  <span style={{ fontSize: "11px", color: "#1D9E75", cursor: "pointer", padding: "2px 4px" }} onClick={() => router.push(`/watching?setupId=${s.id}`)}>→</span>
+                </div>
               </div>
             ))
           )}
