@@ -27,7 +27,7 @@ export async function GET(
   const bestByEvent: Record<string, { timeString: string; timeSeconds: number; competitionName: string; date: Date }> = {};
 
   athlete.records.forEach((r) => {
-    if (r.segment) return; // 駅伝（区間記録）は除外
+    if (r.segment || r.event.includes("駅伝")) return; // 駅伝は除外
     if (!bestByEvent[r.event] || r.timeSeconds < bestByEvent[r.event].timeSeconds) {
       bestByEvent[r.event] = { timeString: r.timeString, timeSeconds: r.timeSeconds, competitionName: r.competitionName, date: r.date };
     }

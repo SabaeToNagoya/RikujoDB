@@ -86,7 +86,7 @@ function WatchingContent() {
         Array.from(allAthleteIds).map(async (aid) => {
           const a = await fetch(`/api/athletes/${aid}`).then((r) => r.json());
           const recentRecords = (a.records || [])
-            .filter((r: { date: string; segment: string | null }) => new Date(r.date) >= oneYearAgo && !r.segment)
+            .filter((r: { date: string; segment: string | null; event: string }) => new Date(r.date) >= oneYearAgo && !r.segment && !r.event.includes("駅伝"))
             .slice(0, 3)
             .map((r: { event: string; timeString: string; date: string; competitionName: string }) => ({ event: r.event, timeString: r.timeString, date: r.date, competitionName: r.competitionName }));
           const bestByEvent: Record<string, { timeSeconds: number; timeString: string; date: string }> = a.bestByEvent || {};
@@ -340,6 +340,17 @@ function WatchingContent() {
                       {b.event}: <strong style={{ color: "var(--color-text-primary)" }}>{b.timeString}</strong>({b.year}年)
                     </div>
                   ))}
+                  {a.recentRecords
+                    .filter((r) => {
+                      const pb = a.allBests.find((b) => b.event === r.event);
+                      return !pb || !pb.isRecent;
+                    })
+                    .map((r, i) => (
+                      <div key={`recent-${i}`} style={{ fontSize: "10px", color: "var(--color-text-secondary)" }}>
+                        {r.event}: <strong style={{ color: "var(--color-text-primary)" }}>{r.timeString}</strong>({new Date(r.date).getFullYear()}年)
+                      </div>
+                    ))
+                  }
                 </div>
               ))}
             </div>
