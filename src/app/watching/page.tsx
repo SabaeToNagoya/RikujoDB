@@ -14,7 +14,6 @@ interface AthleteInfo {
 interface TeamInfo {
   id: string;
   name: string;
-  recentResults: { year: number; ranking: number; competitionName: string }[];
   segments: { segmentNo: number; athlete: AthleteInfo | null }[];
 }
 interface WatchingSetupData {
@@ -95,12 +94,11 @@ function WatchingContent() {
       const teamInfos: TeamInfo[] = [];
       for (const ts of teamSetup) {
         const teamRes = await fetch(`/api/teams/${ts.teamId}`).then((r) => r.json());
-        const recentResults = (teamRes.results || []).slice(0, 4).map((r: { year: number; ranking: number; competitionName: string }) => ({ year: r.year, ranking: r.ranking, competitionName: r.competitionName }));
         const segments = (ts.segments || []).map((s: { segmentNo: number; athleteId: string | null }) => ({
           segmentNo: s.segmentNo,
           athlete: s.athleteId ? athleteData[s.athleteId] || null : null,
         }));
-        teamInfos.push({ id: ts.teamId, name: ts.teamName || teamRes.name, recentResults, segments });
+        teamInfos.push({ id: ts.teamId, name: ts.teamName || teamRes.name, segments });
       }
 
       setData({
@@ -218,23 +216,11 @@ function WatchingContent() {
                       <span style={{ fontSize: "12px", fontWeight: 500 }}>{team.name}</span>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <span style={{ fontSize: "10px", color: "var(--color-text-secondary)" }}>
-                        {team.recentResults.slice(0, 3).map((r) => `${r.year}: ${r.ranking}位`).join("・")}
-                      </span>
                       <span style={{ fontSize: "12px", color: "var(--color-text-tertiary)", transform: expandedTeams.has(team.id) ? "rotate(90deg)" : "none", transition: "transform 0.15s", display: "inline-block" }}>›</span>
                     </div>
                   </div>
                   {expandedTeams.has(team.id) && (
                     <>
-                      {team.recentResults.length > 0 && (
-                        <div style={{ background: "var(--color-background-tertiary)", padding: "0.35rem 0.85rem", borderBottom: "0.5px solid var(--color-border-tertiary)", display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                          {team.recentResults.map((r, i) => (
-                            <span key={i} style={{ fontSize: "10px", color: "var(--color-text-secondary)" }}>
-                              {r.year}: <strong style={{ color: r.ranking <= 3 ? "#0F6E56" : undefined }}>{r.ranking}位</strong>
-                            </span>
-                          ))}
-                        </div>
-                      )}
                       <div style={{ borderTop: "0.5px solid var(--color-border-tertiary)" }}>
                         {team.segments.map((seg) => (
                           <div key={seg.segmentNo} style={{ display: "flex", alignItems: "center", padding: "5px 0.85rem", borderBottom: "0.5px solid var(--color-border-tertiary)" }}>

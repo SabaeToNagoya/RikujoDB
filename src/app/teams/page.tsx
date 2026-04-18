@@ -8,7 +8,6 @@ interface Team {
   name: string;
   type: string;
   notes: string | null;
-  results: { year: number; competitionName: string; ranking: number; type: string }[];
   records: { athleteId: string }[];
 }
 
@@ -17,11 +16,6 @@ const typeBadge = (t: string) =>
   t === "実業団" ? "badge-green" : t === "大学" ? "badge-purple" : t === "高校" ? "badge-orange" : "badge-blue";
 
 const EMPTY_FORM = { name: "", type: "実業団", notes: "" };
-
-function RankBadge({ rank }: { rank: number }) {
-  const cls = rank === 1 ? "rank-badge rank-1" : rank === 2 ? "rank-badge rank-2" : rank === 3 ? "rank-badge rank-3" : "rank-badge rank-n";
-  return <span className={cls}>{rank}</span>;
-}
 
 export default function TeamsPage() {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -72,11 +66,6 @@ export default function TeamsPage() {
 
   const f = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
 
-  const getLatestResult = (team: Team, compType?: string) => {
-    const filtered = compType ? team.results.filter((r) => r.type.includes(compType)) : team.results;
-    return filtered.sort((a, b) => b.year - a.year)[0] || null;
-  };
-
   return (
     <>
       <div className="page-header">
@@ -106,43 +95,34 @@ export default function TeamsPage() {
         ) : (
           <table className="data-table">
             <colgroup>
-              <col style={{ width: "32%" }} />
-              <col style={{ width: "14%" }} />
-              <col style={{ width: "20%" }} />
-              <col style={{ width: "20%" }} />
-              <col style={{ width: "14%" }} />
+              <col style={{ width: "46%" }} />
+              <col style={{ width: "18%" }} />
+              <col style={{ width: "18%" }} />
+              <col style={{ width: "18%" }} />
             </colgroup>
             <thead>
               <tr>
                 <th>チーム名</th>
                 <th>種別</th>
-                <th>直近駅伝</th>
-                <th>直近実業団</th>
+                <th>記録数</th>
                 <th>操作</th>
               </tr>
             </thead>
             <tbody>
-              {teams.map((t) => {
-                const ekiden = getLatestResult(t, "駅伝");
-                const corporate = getLatestResult(t, "マラソン");
-                return (
-                  <tr key={t.id}>
-                    <td>
-                      <Link href={`/teams/${t.id}`} className="link-text">{t.name}</Link>
-                    </td>
-                    <td><span className={`badge ${typeBadge(t.type)}`}>{t.type}</span></td>
-                    <td style={{ color: "var(--color-text-secondary)" }}>
-                      {ekiden ? <><RankBadge rank={ekiden.ranking} /> {ekiden.year}年</> : "—"}
-                    </td>
-                    <td style={{ color: "var(--color-text-secondary)" }}>
-                      {corporate ? <><RankBadge rank={corporate.ranking} /> {corporate.year}年</> : "—"}
-                    </td>
-                    <td>
-                      <button className="btn" style={{ fontSize: "10px", padding: "2px 7px" }} onClick={() => openEdit(t)}>編集</button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {teams.map((t) => (
+                <tr key={t.id}>
+                  <td>
+                    <Link href={`/teams/${t.id}`} className="link-text">{t.name}</Link>
+                  </td>
+                  <td><span className={`badge ${typeBadge(t.type)}`}>{t.type}</span></td>
+                  <td style={{ color: "var(--color-text-secondary)" }}>
+                    {t.records.length}件
+                  </td>
+                  <td>
+                    <button className="btn" style={{ fontSize: "10px", padding: "2px 7px" }} onClick={() => openEdit(t)}>編集</button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         )}

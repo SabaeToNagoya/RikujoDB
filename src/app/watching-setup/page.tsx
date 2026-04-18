@@ -14,7 +14,6 @@ interface Team {
   id: string;
   name: string;
   type: string;
-  results: { year: number; ranking: number; type: string }[];
 }
 interface SegmentAssignment {
   segmentNo: number;
@@ -114,11 +113,6 @@ export default function WatchingSetupPage() {
     return nameMatch && eventMatch;
   });
 
-  const getTeamLatestEkiden = (team: Team) => {
-    const e = team.results.filter((r) => r.type === "駅伝").sort((a, b) => b.year - a.year)[0];
-    return e ? `箱根${e.year}: ${e.ranking}位` : null;
-  };
-
   return (
     <>
       <div className="page-header"><div className="page-title">観戦セットアップ</div></div>
@@ -205,7 +199,7 @@ export default function WatchingSetupPage() {
                   <div style={{ flex: 1 }}>
                     <span style={{ fontSize: "11px", fontWeight: 500 }}>{t.name}</span>
                     <span style={{ fontSize: "10px", color: "var(--color-text-secondary)", marginLeft: "6px" }}>
-                      {[t.type, getTeamLatestEkiden(t)].filter(Boolean).join(" · ")}
+                      {t.type}
                     </span>
                   </div>
                 </div>

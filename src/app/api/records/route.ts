@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       timeSeconds: Math.round(seconds),
       competitionName: body.competitionName,
       date: new Date(body.date),
-      ranking: body.ranking || null,
+      segment: body.segment || null,
       notes: body.notes || null,
     },
   });

@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
       records: {
         where: event ? { event } : undefined,
         orderBy: { timeSeconds: "asc" },
-        select: { event: true, timeSeconds: true, timeString: true, date: true, competitionName: true, ranking: true },
+        select: { event: true, timeSeconds: true, timeString: true, date: true, competitionName: true, segment: true },
       },
     },
     orderBy: { nameKanji: "asc" },

@@ -19,10 +19,6 @@ export async function GET(req: NextRequest) {
       ],
     },
     include: {
-      results: {
-        orderBy: { year: "desc" },
-        take: 3,
-      },
       records: {
         select: { athleteId: true },
         distinct: ["athleteId"],

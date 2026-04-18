@@ -7,10 +7,10 @@ import { EVENTS } from "@/lib/timeUtils";
 interface AthleteRecord {
   id: string;
   event: string;
+  segment: string | null;
   timeString: string;
   competitionName: string;
   date: string;
-  ranking: string | null;
   notes: string | null;
   team?: { name: string } | null;
 }
@@ -64,7 +64,7 @@ const EMPTY_RECORD_FORM = {
   competitionName: "",
   date: "",
   teamId: "",
-  ranking: "",
+  segment: "",
   notes: "",
 };
 
@@ -105,7 +105,7 @@ export default function AthleteDetailPage() {
       competitionName: r.competitionName,
       date: r.date.split("T")[0],
       teamId: "",
-      ranking: r.ranking || "",
+      segment: r.segment || "",
       notes: r.notes || "",
     });
     setRecordModal(true);
@@ -383,12 +383,12 @@ export default function AthleteDetailPage() {
               />
             </div>
             <div>
-              <label className="form-label">順位（任意）</label>
+              <label className="form-label">区間（駅伝のみ）</label>
               <input
                 className="form-input"
-                value={recordForm.ranking}
-                onChange={(e) => rf("ranking", e.target.value)}
-                placeholder="1位 / 銅 / 5位"
+                value={recordForm.segment}
+                onChange={(e) => rf("segment", e.target.value)}
+                placeholder="1区 / 2区"
               />
             </div>
           </div>
@@ -492,8 +492,8 @@ function RecordTable({
           <th>日付</th>
           <th>種目</th>
           <th>記録</th>
-          <th>順位</th>
-          <th>備考</th>
+          <th>区間</th>
+          <th>メモ</th>
         </tr>
       </thead>
       <tbody>
@@ -510,7 +510,7 @@ function RecordTable({
             <td>{r.event}</td>
             <td style={{ fontWeight: 500 }}>{r.timeString}</td>
             <td style={{ color: "var(--color-text-secondary)" }}>
-              {r.ranking || "—"}
+              {r.segment || "—"}
             </td>
             <td style={{ color: "var(--color-text-tertiary)" }}>
               {r.notes || "—"}
