@@ -9,7 +9,7 @@ interface AthleteInfo {
   nameKanji: string;
   dateOfBirth: string | null;
   team: { id: string; name: string } | null;
-  personalBest: { event: string; timeString: string; year: number } | null;
+  allBests: { event: string; timeString: string; year: number; isRecent: boolean }[];
   recentRecords: { event: string; timeString: string; date: string; competitionName: string }[];
 }
 interface TeamInfo {
@@ -86,21 +86,24 @@ function WatchingContent() {
         Array.from(allAthleteIds).map(async (aid) => {
           const a = await fetch(`/api/athletes/${aid}`).then((r) => r.json());
           const recentRecords = (a.records || [])
-            .filter((r: { date: string; event: string }) => new Date(r.date) >= oneYearAgo && !r.event.includes("駅伝"))
+            .filter((r: { date: string; segment: string | null }) => new Date(r.date) >= oneYearAgo && !r.segment)
             .slice(0, 3)
             .map((r: { event: string; timeString: string; date: string; competitionName: string }) => ({ event: r.event, timeString: r.timeString, date: r.date, competitionName: r.competitionName }));
           const bestByEvent: Record<string, { timeSeconds: number; timeString: string; date: string }> = a.bestByEvent || {};
-          const bestEntry = Object.entries(bestByEvent).sort((x, y) => (x[1] as { timeSeconds: number }).timeSeconds - (y[1] as { timeSeconds: number }).timeSeconds)[0];
+          const allBests = Object.entries(bestByEvent)
+            .sort((x, y) => (x[1] as { timeSeconds: number }).timeSeconds - (y[1] as { timeSeconds: number }).timeSeconds)
+            .map(([event, best]) => ({
+              event,
+              timeString: (best as { timeString: string }).timeString,
+              year: new Date((best as { date: string }).date).getFullYear(),
+              isRecent: new Date((best as { date: string }).date) >= oneYearAgo,
+            }));
           athleteData[aid] = {
             id: aid,
             nameKanji: a.nameKanji,
             dateOfBirth: a.dateOfBirth ?? null,
             team: a.team ?? null,
-            personalBest: bestEntry ? {
-              event: bestEntry[0],
-              timeString: (bestEntry[1] as { timeString: string }).timeString,
-              year: new Date((bestEntry[1] as { date: string }).date).getFullYear(),
-            } : null,
+            allBests,
             recentRecords,
           };
         })
@@ -331,9 +334,11 @@ function WatchingContent() {
                     {a.nameKanji}{calculateAge(a.dateOfBirth) !== null ? `(${calculateAge(a.dateOfBirth)})` : ""}
                   </Link>
                   <div style={{ fontSize: "10px", color: "var(--color-text-secondary)", marginBottom: "0.35rem" }}>{a.team?.name || "—"}</div>
-                  {a.personalBest && <div style={{ fontSize: "10px", color: "var(--color-text-secondary)" }}>PB {a.personalBest.event}: <strong style={{ color: "var(--color-text-primary)" }}>{a.personalBest.timeString}</strong>({a.personalBest.year}年)</div>}
-                  {a.recentRecords.map((r, i) => (
-                    <div key={i} style={{ fontSize: "10px", color: "var(--color-text-secondary)" }}>{r.event}: <strong style={{ color: "var(--color-text-primary)" }}>{r.timeString}</strong>({new Date(r.date).getFullYear()}年)</div>
+                  {a.allBests.map((b, i) => (
+                    <div key={i} style={{ fontSize: "10px", color: "var(--color-text-secondary)" }}>
+                      {b.isRecent && <span style={{ color: "#1D9E75", fontWeight: 600, marginRight: "2px" }}>PB</span>}
+                      {b.event}: <strong style={{ color: "var(--color-text-primary)" }}>{b.timeString}</strong>({b.year}年)
+                    </div>
                   ))}
                 </div>
               ))}
