@@ -29,11 +29,14 @@ export async function GET(req: NextRequest) {
             { university: { contains: school } },
           ],
         } : {},
+        // 種目フィルタ: 指定種目の記録を持つ選手のみDBレベルで絞り込む
+        event ? { records: { some: { event } } } : {},
       ],
     },
     include: {
       team: { select: { id: true, name: true } },
       records: {
+        where: event ? { event } : undefined,
         orderBy: { timeSeconds: "asc" },
         select: { event: true, timeSeconds: true, timeString: true, date: true, competitionName: true, ranking: true },
       },
@@ -41,10 +44,7 @@ export async function GET(req: NextRequest) {
     orderBy: { nameKanji: "asc" },
   });
 
-  // 種目フィルタ（記録に種目が含まれる選手のみ）
-  const filtered = event
-    ? athletes.filter((a) => a.records.some((r) => r.event === event))
-    : athletes;
+  const filtered = athletes;
 
   // 主種目・自己ベストを付加
   const result = filtered.map((a) => {

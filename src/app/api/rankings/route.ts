@@ -14,7 +14,11 @@ export async function GET(req: NextRequest) {
 
   if (!event) return NextResponse.json([]);
 
-  const where: Record<string, unknown> = { event };
+  const where: {
+    event: string;
+    date?: { gte: Date; lte: Date };
+    athlete?: { gender: string };
+  } = { event };
 
   if (year) {
     const y = parseInt(year);
@@ -22,6 +26,11 @@ export async function GET(req: NextRequest) {
       gte: new Date(`${y}-01-01`),
       lte: new Date(`${y}-12-31`),
     };
+  }
+
+  // 性別フィルタはDBレベルで絞り込む
+  if (gender) {
+    where.athlete = { gender };
   }
 
   const records = await prisma.record.findMany({
@@ -35,10 +44,7 @@ export async function GET(req: NextRequest) {
     orderBy: { timeSeconds: "asc" },
   });
 
-  // 性別フィルタ
-  const filtered = gender
-    ? records.filter((r) => r.athlete.gender === gender)
-    : records;
+  const filtered = records;
 
   // 選手ごとに最速記録のみ（ベスト1件）
   const bestByAthlete: Map<string, typeof filtered[0]> = new Map();
