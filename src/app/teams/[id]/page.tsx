@@ -7,7 +7,11 @@ import Link from "next/link";
 interface TeamAthlete {
   id: string;
   nameKanji: string;
+  dateOfBirth: string | null;
+  gender: string;
   team: { id: string; name: string } | null;
+  highSchool?: string | null;
+  university?: string | null;
   mainEvent: string | null;
   bestByEvent: Record<string, string>;
 }
@@ -26,7 +30,8 @@ interface TeamDetail {
   type: string;
   notes: string | null;
   results: TeamResult[];
-  athletes: TeamAthlete[];
+  currentAthletes: TeamAthlete[];
+  formerAthletes: TeamAthlete[];
 }
 
 const RESULT_TYPES = ["駅伝", "マラソン団体戦", "実業団対抗", "その他"];
@@ -125,6 +130,61 @@ function ResultTable({
   );
 }
 
+function AthleteTable({
+  athletes,
+  emptyMessage,
+}: {
+  athletes: TeamAthlete[];
+  emptyMessage: string;
+}) {
+  if (athletes.length === 0) {
+    return (
+      <div style={{ fontSize: "11px", color: "var(--color-text-tertiary)", padding: "0.4rem 0" }}>
+        {emptyMessage}
+      </div>
+    );
+  }
+  return (
+    <table className="data-table">
+      <colgroup>
+        <col style={{ width: "26%" }} />
+        <col style={{ width: "14%" }} />
+        <col style={{ width: "14%" }} />
+        <col style={{ width: "46%" }} />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>氏名</th>
+          <th>現所属</th>
+          <th>主種目</th>
+          <th>自己ベスト</th>
+        </tr>
+      </thead>
+      <tbody>
+        {athletes.map((a) => (
+          <tr key={a.id}>
+            <td>
+              <Link href={`/athletes/${a.id}`} className="link-text">
+                {a.nameKanji}
+              </Link>
+            </td>
+            <td style={{ fontSize: "10px", color: "var(--color-text-secondary)" }}>
+              {a.team ? a.team.name : "—"}
+            </td>
+            <td>{a.mainEvent || "—"}</td>
+            <td style={{ color: "var(--color-text-secondary)" }}>
+              {Object.entries(a.bestByEvent)
+                .slice(0, 3)
+                .map(([ev, t]) => `${ev}: ${t}`)
+                .join("  /  ") || "—"}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
 export default function TeamDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
@@ -212,6 +272,10 @@ export default function TeamDetailPage() {
       ? "badge-purple"
       : "badge-orange";
 
+  const formerLabel =
+    team.type === "大学" ? "卒業生" : team.type === "高校" ? "卒業生" : "過去の所属選手";
+  const totalAthletes = (team.currentAthletes?.length ?? 0) + (team.formerAthletes?.length ?? 0);
+
   return (
     <>
       <div className="breadcrumb">
@@ -266,6 +330,11 @@ export default function TeamDetailPage() {
             onClick={() => setActiveTab("athletes")}
           >
             所属選手
+            {totalAthletes > 0 && (
+              <span style={{ marginLeft: "4px", fontSize: "10px", color: "var(--color-text-tertiary)" }}>
+                ({totalAthletes})
+              </span>
+            )}
           </button>
           <button
             className={`tab-item ${activeTab === "ekiden" ? "active" : ""}`}
@@ -282,44 +351,76 @@ export default function TeamDetailPage() {
         </div>
 
         {activeTab === "athletes" && (
-          team.athletes.length === 0 ? (
-            <div style={{ fontSize: "11px", color: "var(--color-text-tertiary)", padding: "0.5rem 0" }}>
-              このチームに紐づく選手の記録がありません（記録登録時にチームを設定してください）
+          <div>
+            {/* 現在のメンバー */}
+            <div style={{ marginBottom: "1rem" }}>
+              <div style={{
+                fontSize: "11px",
+                fontWeight: 600,
+                color: "var(--color-text-secondary)",
+                marginBottom: "0.5rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}>
+                <span style={{
+                  display: "inline-block",
+                  width: "8px",
+                  height: "8px",
+                  borderRadius: "50%",
+                  background: "#0F6E56",
+                }} />
+                現在のメンバー
+                <span style={{ fontWeight: 400, color: "var(--color-text-tertiary)" }}>
+                  {team.currentAthletes?.length ?? 0}名
+                </span>
+              </div>
+              <AthleteTable
+                athletes={team.currentAthletes ?? []}
+                emptyMessage="現在のメンバーが登録されていません"
+              />
             </div>
-          ) : (
-            <table className="data-table">
-              <colgroup>
-                <col style={{ width: "28%" }} />
-                <col style={{ width: "16%" }} />
-                <col style={{ width: "56%" }} />
-              </colgroup>
-              <thead>
-                <tr>
-                  <th>氏名</th>
-                  <th>主種目</th>
-                  <th>自己ベスト</th>
-                </tr>
-              </thead>
-              <tbody>
-                {team.athletes.map((a) => (
-                  <tr key={a.id}>
-                    <td>
-                      <Link href={`/athletes/${a.id}`} className="link-text">
-                        {a.nameKanji}
-                      </Link>
-                    </td>
-                    <td>{a.mainEvent || "—"}</td>
-                    <td style={{ color: "var(--color-text-secondary)" }}>
-                      {Object.entries(a.bestByEvent)
-                        .slice(0, 3)
-                        .map(([ev, t]) => `${ev}: ${t}`)
-                        .join("  /  ") || "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )
+
+            {/* 過去のメンバー */}
+            {((team.formerAthletes?.length ?? 0) > 0 || team.type === "大学" || team.type === "高校") && (
+              <div>
+                <div style={{
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  color: "var(--color-text-secondary)",
+                  marginBottom: "0.5rem",
+                  marginTop: "0.5rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  borderTop: "1px solid var(--color-border)",
+                  paddingTop: "0.75rem",
+                }}>
+                  <span style={{
+                    display: "inline-block",
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    background: "#aaa",
+                  }} />
+                  {formerLabel}
+                  <span style={{ fontWeight: 400, color: "var(--color-text-tertiary)" }}>
+                    {team.formerAthletes?.length ?? 0}名
+                  </span>
+                </div>
+                <AthleteTable
+                  athletes={team.formerAthletes ?? []}
+                  emptyMessage={`${formerLabel}が登録されていません`}
+                />
+              </div>
+            )}
+
+            {totalAthletes === 0 && (
+              <div style={{ fontSize: "11px", color: "var(--color-text-tertiary)", padding: "0.5rem 0" }}>
+                このチームに登録された選手がいません
+              </div>
+            )}
+          </div>
         )}
 
         {activeTab === "ekiden" && (
