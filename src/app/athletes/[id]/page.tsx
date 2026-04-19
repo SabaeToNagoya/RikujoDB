@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Modal } from "@/components/ui/Modal";
-import { EVENTS } from "@/lib/timeUtils";
+import { EVENTS, PREFECTURES } from "@/lib/timeUtils";
 
 interface AthleteRecord {
   id: string;
@@ -68,6 +68,18 @@ const EMPTY_RECORD_FORM = {
   notes: "",
 };
 
+const EMPTY_ATHLETE_FORM = {
+  nameKanji: "",
+  nameFurigana: "",
+  dateOfBirth: "",
+  prefecture: "",
+  highSchool: "",
+  university: "",
+  teamId: "",
+  gender: "男性",
+  notes: "",
+};
+
 export default function AthleteDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
@@ -79,6 +91,10 @@ export default function AthleteDetailPage() {
   const [recordForm, setRecordForm] = useState(EMPTY_RECORD_FORM);
   const [saving, setSaving] = useState(false);
   const [deleteRecordId, setDeleteRecordId] = useState<string | null>(null);
+  const [athleteModal, setAthleteModal] = useState(false);
+  const [athleteForm, setAthleteForm] = useState(EMPTY_ATHLETE_FORM);
+  const [athleteSaving, setAthleteSaving] = useState(false);
+  const [deleteAthleteConfirm, setDeleteAthleteConfirm] = useState(false);
 
   useEffect(() => {
     fetch(`/api/athletes/${id}`).then((r) => r.json()).then(setAthlete);
@@ -91,6 +107,42 @@ export default function AthleteDetailPage() {
 
   const reload = () =>
     fetch(`/api/athletes/${id}`).then((r) => r.json()).then(setAthlete);
+
+  const openEditAthlete = () => {
+    if (!athlete) return;
+    setAthleteForm({
+      nameKanji: athlete.nameKanji,
+      nameFurigana: athlete.nameFurigana,
+      dateOfBirth: athlete.dateOfBirth ? athlete.dateOfBirth.split("T")[0] : "",
+      prefecture: athlete.prefecture || "",
+      highSchool: athlete.highSchool || "",
+      university: athlete.university || "",
+      teamId: athlete.teamId || "",
+      gender: athlete.gender,
+      notes: athlete.notes || "",
+    });
+    setAthleteModal(true);
+  };
+
+  const saveAthlete = async () => {
+    setAthleteSaving(true);
+    await fetch(`/api/athletes/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(athleteForm),
+    });
+    setAthleteSaving(false);
+    setAthleteModal(false);
+    reload();
+  };
+
+  const deleteAthlete = async () => {
+    await fetch(`/api/athletes/${id}`, { method: "DELETE" });
+    router.push("/athletes");
+  };
+
+  const af = (k: string, v: string) =>
+    setAthleteForm((p) => ({ ...p, [k]: v }));
 
   const openAddRecord = () => {
     setEditingRecord(null);
@@ -194,6 +246,9 @@ export default function AthleteDetailPage() {
         <div style={{ display: "flex", gap: "6px" }}>
           <button className="btn btn-primary" onClick={openAddRecord}>
             + 記録を追加
+          </button>
+          <button className="btn" onClick={openEditAthlete}>
+            ✏️ 編集
           </button>
           <button className="btn" onClick={() => router.push("/athletes")}>
             一覧へ
@@ -459,6 +514,152 @@ export default function AthleteDetailPage() {
             キャンセル
           </button>
           <button className="btn btn-danger" onClick={deleteRecord}>
+            削除する
+          </button>
+        </div>
+      </Modal>
+
+      {/* 選手情報編集モーダル */}
+      <Modal
+        isOpen={athleteModal}
+        onClose={() => setAthleteModal(false)}
+        title="選手情報を編集"
+      >
+        <div style={{ display: "grid", gap: "0.65rem" }}>
+          <div className="two-col" style={{ gap: "8px" }}>
+            <div>
+              <label className="form-label">氏名（漢字）*</label>
+              <input
+                className="form-input"
+                value={athleteForm.nameKanji}
+                onChange={(e) => af("nameKanji", e.target.value)}
+                placeholder="田中 希実"
+              />
+            </div>
+            <div>
+              <label className="form-label">ふりがな</label>
+              <input
+                className="form-input"
+                value={athleteForm.nameFurigana}
+                onChange={(e) => af("nameFurigana", e.target.value)}
+                placeholder="たなか のぞみ"
+              />
+            </div>
+          </div>
+          <div className="two-col" style={{ gap: "8px" }}>
+            <div>
+              <label className="form-label">生年月日</label>
+              <input
+                className="form-input"
+                type="date"
+                value={athleteForm.dateOfBirth}
+                onChange={(e) => af("dateOfBirth", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="form-label">性別</label>
+              <select
+                className="form-select"
+                value={athleteForm.gender}
+                onChange={(e) => af("gender", e.target.value)}
+              >
+                <option>男性</option>
+                <option>女性</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="form-label">出身都道府県</label>
+            <select
+              className="form-select"
+              value={athleteForm.prefecture}
+              onChange={(e) => af("prefecture", e.target.value)}
+            >
+              <option value="">選択してください</option>
+              {PREFECTURES.map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
+          </div>
+          <div className="two-col" style={{ gap: "8px" }}>
+            <div>
+              <label className="form-label">出身高校</label>
+              <input
+                className="form-input"
+                value={athleteForm.highSchool}
+                onChange={(e) => af("highSchool", e.target.value)}
+                placeholder="西脇工業"
+              />
+            </div>
+            <div>
+              <label className="form-label">出身大学</label>
+              <input
+                className="form-input"
+                value={athleteForm.university}
+                onChange={(e) => af("university", e.target.value)}
+                placeholder="早稲田大学"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="form-label">所属チーム</label>
+            <select
+              className="form-select"
+              value={athleteForm.teamId}
+              onChange={(e) => af("teamId", e.target.value)}
+            >
+              <option value="">未設定</option>
+              {teams.map((t) => (
+                <option key={t.id} value={t.id}>{t.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="form-label">備考</label>
+            <textarea
+              className="form-input"
+              rows={2}
+              value={athleteForm.notes}
+              onChange={(e) => af("notes", e.target.value)}
+              placeholder="メモ..."
+              style={{ resize: "vertical" }}
+            />
+          </div>
+          <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end", marginTop: "0.25rem" }}>
+            <button
+              className="btn btn-danger"
+              onClick={() => { setAthleteModal(false); setDeleteAthleteConfirm(true); }}
+            >
+              選手を削除
+            </button>
+            <button className="btn" onClick={() => setAthleteModal(false)}>
+              キャンセル
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={saveAthlete}
+              disabled={athleteSaving || !athleteForm.nameKanji}
+            >
+              {athleteSaving ? "保存中..." : "保存"}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* 選手削除確認 */}
+      <Modal
+        isOpen={deleteAthleteConfirm}
+        onClose={() => setDeleteAthleteConfirm(false)}
+        title="選手を削除"
+      >
+        <p style={{ fontSize: "13px", marginBottom: "1rem" }}>
+          この選手とすべての記録を削除します。元に戻せません。
+        </p>
+        <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+          <button className="btn" onClick={() => setDeleteAthleteConfirm(false)}>
+            キャンセル
+          </button>
+          <button className="btn btn-danger" onClick={deleteAthlete}>
             削除する
           </button>
         </div>
