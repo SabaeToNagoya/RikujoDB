@@ -11,6 +11,7 @@ export async function GET(req: NextRequest) {
   const year = searchParams.get("year") || "";
   const name = searchParams.get("name") || "";
   const event = searchParams.get("event") || "";
+  const segment = searchParams.get("segment") || "";
 
   // 大会名が未選択の場合は空配列を返す
   if (!name) return NextResponse.json([]);
@@ -19,6 +20,7 @@ export async function GET(req: NextRequest) {
     where: {
       competitionName: name,
       ...(event ? { event } : {}),
+      ...(segment ? { segment } : {}),
       ...(year
         ? {
             date: {

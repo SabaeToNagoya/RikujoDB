@@ -11,15 +11,17 @@ export async function GET() {
     select: {
       competitionName: true,
       event: true,
+      segment: true,
       date: true,
     },
   });
 
-  // {year, name, event} の組み合わせ配列を返す（クライアント側で連動絞り込みに使う）
+  // {year, name, event, segment} の組み合わせ配列を返す（クライアント側で連動絞り込みに使う）
   const combinations = records.map((r) => ({
     year: new Date(r.date).getFullYear(),
     name: r.competitionName,
     event: r.event,
+    segment: r.segment ?? "",
   }));
 
   return NextResponse.json(combinations);
