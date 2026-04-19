@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   const teams = await prisma.team.findMany({
     where: {
       AND: [
-        name ? { name: { contains: name } } : {},
+        name ? { name: { contains: name, mode: 'insensitive' } } : {},
         type ? { type } : {},
       ],
     },

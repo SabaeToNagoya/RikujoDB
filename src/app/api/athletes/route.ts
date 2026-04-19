@@ -18,15 +18,15 @@ export async function GET(req: NextRequest) {
       AND: [
         name ? {
           OR: [
-            { nameKanji: { contains: name } },
-            { nameFurigana: { contains: name } },
+            { nameKanji: { contains: name, mode: 'insensitive' } },
+            { nameFurigana: { contains: name, mode: 'insensitive' } },
           ],
         } : {},
-        team ? { team: { name: { contains: team } } } : {},
+        team ? { team: { name: { contains: team, mode: 'insensitive' } } } : {},
         school ? {
           OR: [
-            { highSchool: { contains: school } },
-            { university: { contains: school } },
+            { highSchool: { contains: school, mode: 'insensitive' } },
+            { university: { contains: school, mode: 'insensitive' } },
           ],
         } : {},
         // 種目フィルタ: 指定種目の記録を持つ選手のみDBレベルで絞り込む
