@@ -15,19 +15,12 @@ export async function GET() {
     },
   });
 
-  const yearsSet = new Set<number>();
-  const namesSet = new Set<string>();
-  const eventsSet = new Set<string>();
+  // {year, name, event} の組み合わせ配列を返す（クライアント側で連動絞り込みに使う）
+  const combinations = records.map((r) => ({
+    year: new Date(r.date).getFullYear(),
+    name: r.competitionName,
+    event: r.event,
+  }));
 
-  for (const r of records) {
-    yearsSet.add(new Date(r.date).getFullYear());
-    namesSet.add(r.competitionName);
-    eventsSet.add(r.event);
-  }
-
-  const years = Array.from(yearsSet).sort((a, b) => b - a);
-  const names = Array.from(namesSet).sort();
-  const events = Array.from(eventsSet).sort();
-
-  return NextResponse.json({ years, names, events });
+  return NextResponse.json(combinations);
 }

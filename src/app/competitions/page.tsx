@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 
 interface CompetitionRecord {
@@ -14,34 +14,71 @@ interface CompetitionRecord {
   team: { name: string } | null;
 }
 
+interface Combination {
+  year: number;
+  name: string;
+  event: string;
+}
+
 function formatDate(d: string) {
   const dt = new Date(d);
   return `${dt.getFullYear()}/${dt.getMonth() + 1}/${dt.getDate()}`;
 }
 
 export default function CompetitionsPage() {
-  const [options, setOptions] = useState<{ years: number[]; names: string[]; events: string[] }>({
-    years: [],
-    names: [],
-    events: [],
-  });
+  // 全組み合わせデータ（初回ロード）
+  const [combinations, setCombinations] = useState<Combination[]>([]);
+
+  // フィルター状態
   const [filters, setFilters] = useState({ year: "", name: "", event: "" });
+
+  // 結果
   const [records, setRecords] = useState<CompetitionRecord[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // フィルター選択肢を取得
+  // 組み合わせデータを取得
   useEffect(() => {
     fetch("/api/competitions/options")
       .then((r) => r.json())
-      .then(setOptions);
+      .then(setCombinations);
   }, []);
 
-  // 大会名が変わったら年・種目をリセット
-  const handleNameChange = (name: string) => {
-    setFilters({ year: "", name, event: "" });
-  };
+  // --- 連動する選択肢の計算 ---
 
-  // 結果を取得
+  // 年の選択肢：nameとeventで絞り込んだ組み合わせに含まれる年
+  const availableYears = useMemo(() => {
+    const filtered = combinations.filter(
+      (c) =>
+        (!filters.name || c.name === filters.name) &&
+        (!filters.event || c.event === filters.event)
+    );
+    const set = new Set(filtered.map((c) => c.year));
+    return Array.from(set).sort((a, b) => b - a);
+  }, [combinations, filters.name, filters.event]);
+
+  // 大会名の選択肢：yearとeventで絞り込んだ組み合わせに含まれる大会名
+  const availableNames = useMemo(() => {
+    const filtered = combinations.filter(
+      (c) =>
+        (!filters.year || c.year === Number(filters.year)) &&
+        (!filters.event || c.event === filters.event)
+    );
+    const set = new Set(filtered.map((c) => c.name));
+    return Array.from(set).sort();
+  }, [combinations, filters.year, filters.event]);
+
+  // 種目の選択肢：yearとnameで絞り込んだ組み合わせに含まれる種目
+  const availableEvents = useMemo(() => {
+    const filtered = combinations.filter(
+      (c) =>
+        (!filters.year || c.year === Number(filters.year)) &&
+        (!filters.name || c.name === filters.name)
+    );
+    const set = new Set(filtered.map((c) => c.event));
+    return Array.from(set).sort();
+  }, [combinations, filters.year, filters.name]);
+
+  // --- 結果取得 ---
   const load = useCallback(() => {
     if (!filters.name) {
       setRecords([]);
@@ -76,7 +113,7 @@ export default function CompetitionsPage() {
           style={{ flex: "none", minWidth: "100px" }}
         >
           <option value="">全年度</option>
-          {options.years.map((y) => (
+          {availableYears.map((y) => (
             <option key={y} value={y}>
               {y}年
             </option>
@@ -86,11 +123,11 @@ export default function CompetitionsPage() {
         {/* 大会名 */}
         <select
           value={filters.name}
-          onChange={(e) => handleNameChange(e.target.value)}
+          onChange={(e) => setFilters((p) => ({ ...p, name: e.target.value }))}
           style={{ flex: "none", minWidth: "200px" }}
         >
           <option value="">大会名を選択...</option>
-          {options.names.map((n) => (
+          {availableNames.map((n) => (
             <option key={n} value={n}>
               {n}
             </option>
@@ -104,7 +141,7 @@ export default function CompetitionsPage() {
           style={{ flex: "none", minWidth: "130px" }}
         >
           <option value="">全種目</option>
-          {options.events.map((ev) => (
+          {availableEvents.map((ev) => (
             <option key={ev} value={ev}>
               {ev}
             </option>
