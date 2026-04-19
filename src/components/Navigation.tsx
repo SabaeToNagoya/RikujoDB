@@ -7,6 +7,7 @@ const tabs = [
   { label: "ダッシュボード", href: "/dashboard" },
   { label: "選手", href: "/athletes" },
   { label: "チーム", href: "/teams" },
+  { label: "大会", href: "/competitions" },
   { label: "ランキング", href: "/rankings" },
   { label: "記録取り込み", href: "/import" },
   { label: "観戦セットアップ", href: "/watching-setup" },
