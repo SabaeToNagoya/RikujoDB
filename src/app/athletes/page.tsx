@@ -37,6 +37,9 @@ const EMPTY_FORM = {
   notes: "",
 };
 
+type Filters = { name: string; event: string; team: string; school: string };
+const EMPTY_FILTERS: Filters = { name: "", event: "", team: "", school: "" };
+
 function formatDOB(d: string | null) {
   if (!d) return "—";
   const dt = new Date(d);
@@ -54,15 +57,20 @@ function EventBadge({ event }: { event: string | null }) {
 export default function AthletesPage() {
   const [athletes, setAthletes] = useState<Athlete[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({ name: "", event: "", team: "", school: "" });
+  const [loading, setLoading] = useState(false);
+
+  // 入力欄の値（表示用）
+  const [inputFilters, setInputFilters] = useState<Filters>(EMPTY_FILTERS);
+  // 実際にAPIに送る値（nullの間はAPI呼び出しなし）
+  const [searchFilters, setSearchFilters] = useState<Filters | null>(null);
+
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Athlete | null>(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  // チーム一覧を取得
+  // チーム一覧を取得（モーダル用）
   useEffect(() => {
     fetch("/api/teams")
       .then((r) => r.json())
@@ -70,19 +78,29 @@ export default function AthletesPage() {
   }, []);
 
   const loadAthletes = useCallback(() => {
+    if (searchFilters === null) return;
     setLoading(true);
     const p = new URLSearchParams();
-    if (filters.name) p.set("name", filters.name);
-    if (filters.event) p.set("event", filters.event);
-    if (filters.team) p.set("team", filters.team);
-    if (filters.school) p.set("school", filters.school);
+    if (searchFilters.name) p.set("name", searchFilters.name);
+    if (searchFilters.event) p.set("event", searchFilters.event);
+    if (searchFilters.team) p.set("team", searchFilters.team);
+    if (searchFilters.school) p.set("school", searchFilters.school);
     fetch(`/api/athletes?${p}`)
       .then((r) => r.json())
       .then(setAthletes)
       .finally(() => setLoading(false));
-  }, [filters]);
+  }, [searchFilters]);
 
   useEffect(() => { loadAthletes(); }, [loadAthletes]);
+
+  // 検索実行（ボタンまたはEnterキー）
+  const handleSearch = () => {
+    setSearchFilters({ ...inputFilters });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") handleSearch();
+  };
 
   const openAdd = () => {
     setEditing(null);
@@ -139,35 +157,43 @@ export default function AthletesPage() {
       <div className="filter-bar">
         <input
           placeholder="氏名で検索..."
-          value={filters.name}
-          onChange={(e) => setFilters((p) => ({ ...p, name: e.target.value }))}
+          value={inputFilters.name}
+          onChange={(e) => setInputFilters((p) => ({ ...p, name: e.target.value }))}
+          onKeyDown={handleKeyDown}
         />
         <select
-          value={filters.event}
-          onChange={(e) => setFilters((p) => ({ ...p, event: e.target.value }))}
+          value={inputFilters.event}
+          onChange={(e) => setInputFilters((p) => ({ ...p, event: e.target.value }))}
         >
           <option value="">全種目</option>
           {EVENTS.map((ev) => <option key={ev} value={ev}>{ev}</option>)}
         </select>
         <input
           placeholder="所属で絞り込み..."
-          value={filters.team}
-          onChange={(e) => setFilters((p) => ({ ...p, team: e.target.value }))}
+          value={inputFilters.team}
+          onChange={(e) => setInputFilters((p) => ({ ...p, team: e.target.value }))}
+          onKeyDown={handleKeyDown}
         />
         <input
           placeholder="出身校で絞り込み..."
-          value={filters.school}
-          onChange={(e) => setFilters((p) => ({ ...p, school: e.target.value }))}
+          value={inputFilters.school}
+          onChange={(e) => setInputFilters((p) => ({ ...p, school: e.target.value }))}
+          onKeyDown={handleKeyDown}
         />
+        <button className="btn btn-primary" onClick={handleSearch}>検索</button>
       </div>
 
       {/* テーブル */}
       <div className="card" style={{ padding: 0, overflow: "hidden" }}>
         {loading ? (
           <div style={{ padding: "1.5rem", textAlign: "center", fontSize: "11px", color: "var(--color-text-tertiary)" }}>読み込み中...</div>
+        ) : searchFilters === null ? (
+          <div style={{ padding: "1.5rem", textAlign: "center", fontSize: "11px", color: "var(--color-text-tertiary)" }}>
+            検索条件を入力し、Enterキーまたは検索ボタンで検索してください
+          </div>
         ) : athletes.length === 0 ? (
           <div style={{ padding: "1.5rem", textAlign: "center", fontSize: "11px", color: "var(--color-text-tertiary)" }}>
-            {Object.values(filters).some(Boolean) ? "条件に一致する選手がいません" : "選手が登録されていません"}
+            条件に一致する選手がいません
           </div>
         ) : (
           <table className="data-table">
@@ -216,9 +242,11 @@ export default function AthletesPage() {
         )}
       </div>
 
-      <div style={{ fontSize: "11px", color: "var(--color-text-tertiary)" }}>
-        {athletes.length}人
-      </div>
+      {searchFilters !== null && (
+        <div style={{ fontSize: "11px", color: "var(--color-text-tertiary)" }}>
+          {athletes.length}人
+        </div>
+      )}
 
       {/* 選手追加/編集モーダル */}
       <Modal

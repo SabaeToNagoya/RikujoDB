@@ -17,10 +17,18 @@ const typeBadge = (t: string) =>
 
 const EMPTY_FORM = { name: "", type: "実業団", notes: "" };
 
+type Filters = { name: string; type: string };
+const EMPTY_FILTERS: Filters = { name: "", type: "" };
+
 export default function TeamsPage() {
   const [teams, setTeams] = useState<Team[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({ name: "", type: "" });
+  const [loading, setLoading] = useState(false);
+
+  // 入力欄の値（表示用）
+  const [inputFilters, setInputFilters] = useState<Filters>(EMPTY_FILTERS);
+  // 実際にAPIに送る値（nullの間はAPI呼び出しなし）
+  const [searchFilters, setSearchFilters] = useState<Filters | null>(null);
+
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Team | null>(null);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -28,17 +36,27 @@ export default function TeamsPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const loadTeams = useCallback(() => {
+    if (searchFilters === null) return;
     setLoading(true);
     const p = new URLSearchParams();
-    if (filters.name) p.set("name", filters.name);
-    if (filters.type) p.set("type", filters.type);
+    if (searchFilters.name) p.set("name", searchFilters.name);
+    if (searchFilters.type) p.set("type", searchFilters.type);
     fetch(`/api/teams?${p}`)
       .then((r) => r.json())
       .then(setTeams)
       .finally(() => setLoading(false));
-  }, [filters]);
+  }, [searchFilters]);
 
   useEffect(() => { loadTeams(); }, [loadTeams]);
+
+  // 検索実行（ボタンまたはEnterキー）
+  const handleSearch = () => {
+    setSearchFilters({ ...inputFilters });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") handleSearch();
+  };
 
   const openAdd = () => { setEditing(null); setForm(EMPTY_FORM); setModalOpen(true); };
   const openEdit = (t: Team) => {
@@ -76,21 +94,30 @@ export default function TeamsPage() {
       <div className="filter-bar">
         <input
           placeholder="チーム名で検索..."
-          value={filters.name}
-          onChange={(e) => setFilters((p) => ({ ...p, name: e.target.value }))}
+          value={inputFilters.name}
+          onChange={(e) => setInputFilters((p) => ({ ...p, name: e.target.value }))}
+          onKeyDown={handleKeyDown}
         />
-        <select value={filters.type} onChange={(e) => setFilters((p) => ({ ...p, type: e.target.value }))}>
+        <select
+          value={inputFilters.type}
+          onChange={(e) => setInputFilters((p) => ({ ...p, type: e.target.value }))}
+        >
           <option value="">全種別</option>
           {TEAM_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
         </select>
+        <button className="btn btn-primary" onClick={handleSearch}>検索</button>
       </div>
 
       <div className="card" style={{ padding: 0, overflow: "hidden" }}>
         {loading ? (
           <div style={{ padding: "1.5rem", textAlign: "center", fontSize: "11px", color: "var(--color-text-tertiary)" }}>読み込み中...</div>
+        ) : searchFilters === null ? (
+          <div style={{ padding: "1.5rem", textAlign: "center", fontSize: "11px", color: "var(--color-text-tertiary)" }}>
+            検索条件を入力し、Enterキーまたは検索ボタンで検索してください
+          </div>
         ) : teams.length === 0 ? (
           <div style={{ padding: "1.5rem", textAlign: "center", fontSize: "11px", color: "var(--color-text-tertiary)" }}>
-            {filters.name || filters.type ? "条件に一致するチームがありません" : "チームが登録されていません"}
+            条件に一致するチームがありません
           </div>
         ) : (
           <table className="data-table">
@@ -127,7 +154,10 @@ export default function TeamsPage() {
           </table>
         )}
       </div>
-      <div style={{ fontSize: "11px", color: "var(--color-text-tertiary)" }}>{teams.length}チーム</div>
+
+      {searchFilters !== null && (
+        <div style={{ fontSize: "11px", color: "var(--color-text-tertiary)" }}>{teams.length}チーム</div>
+      )}
 
       {/* モーダル */}
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "チームを編集" : "チームを追加"}>
