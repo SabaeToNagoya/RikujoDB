@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --color-background-primary: #ffffff;
-  --color-background-secondary: #f7f7f7;
-  --color-background-tertiary: #efefef;
-  --color-border-secondary: rgba(0, 0, 0, 0.12);
-  --color-border-tertiary: rgba(0, 0, 0, 0.07);
-  --color-text-primary: #111111;
-  --color-text-secondary: #6b7280;
-  --color-text-tertiary: #9ca3af;
+  --color-background-primary: #0f1729;
+  --color-background-secondary: #1a2440;
+  --color-background-tertiary: #090e1a;
+  --color-border-secondary: rgba(255, 255, 255, 0.12);
+  --color-border-tertiary: rgba(255, 255, 255, 0.06);
+  --color-text-primary: #e8edf5;
+  --color-text-secondary: #7a8baa;
+  --color-text-tertiary: #4a5a75;
   --border-radius-sm: 4px;
   --border-radius-md: 6px;
   --border-radius-lg: 10px;
@@ -41,7 +41,7 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border-secondary);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 2px;
 }
 
@@ -102,10 +102,10 @@ body {
   border-radius: 99px;
   white-space: nowrap;
 }
-.badge-green  { background: #E1F5EE; color: #085041; }
-.badge-blue   { background: #E6F1FB; color: #0C447C; }
-.badge-orange { background: #FAEEDA; color: #633806; }
-.badge-purple { background: #EEEDFE; color: #3C3489; }
+.badge-green  { background: #0c2f38; color: #22d3ee; }
+.badge-blue   { background: #0d1f3d; color: #60a5fa; }
+.badge-orange { background: #2e1a08; color: #fb923c; }
+.badge-purple { background: #1a1245; color: #a78bfa; }
 
 /* 順位バッジ（丸） */
 .rank-badge {
@@ -118,9 +118,9 @@ body {
   font-size: 10px;
   font-weight: 500;
 }
-.rank-1 { background: #FAEEDA; color: #633806; }
-.rank-2 { background: #F1EFE8; color: #444441; }
-.rank-3 { background: #FAECE7; color: #712B13; }
+.rank-1 { background: #3a2a06; color: #fbbf24; }
+.rank-2 { background: #1c2535; color: #94a3b8; }
+.rank-3 { background: #2d1a0e; color: #c07a3a; }
 .rank-n { background: var(--color-background-secondary); color: var(--color-text-secondary); }
 
 /* フォーム入力 */
@@ -130,14 +130,14 @@ body {
   padding: 6px 9px;
   border-radius: var(--border-radius-md);
   border: 0.5px solid var(--color-border-secondary);
-  background: var(--color-background-primary);
+  background: var(--color-background-secondary);
   color: var(--color-text-primary);
   width: 100%;
   outline: none;
 }
 .form-input:focus,
 .form-select:focus {
-  border-color: #1D9E75;
+  border-color: #06b6d4;
 }
 .form-label {
   font-size: 10px;
@@ -152,7 +152,7 @@ body {
   padding: 5px 11px;
   border-radius: var(--border-radius-md);
   border: 0.5px solid var(--color-border-secondary);
-  background: var(--color-background-primary);
+  background: var(--color-background-secondary);
   color: var(--color-text-primary);
   cursor: pointer;
   white-space: nowrap;
@@ -161,23 +161,24 @@ body {
   gap: 4px;
 }
 .btn:hover {
-  background: var(--color-background-secondary);
+  background: #243058;
 }
 .btn-primary {
-  background: #1D9E75;
-  color: white;
-  border-color: #1D9E75;
+  background: #06b6d4;
+  color: #090e1a;
+  border-color: #06b6d4;
+  font-weight: 500;
 }
 .btn-primary:hover {
-  background: #0F6E56;
+  background: #0891b2;
 }
 .btn-danger {
-  background: #fee2e2;
-  color: #991b1b;
-  border-color: #fca5a5;
+  background: #2d0f0f;
+  color: #f87171;
+  border-color: #7f1d1d;
 }
 .btn-danger:hover {
-  background: #fecaca;
+  background: #3d1212;
 }
 
 /* タブ */
@@ -200,8 +201,8 @@ body {
   border-right: none;
 }
 .tab-item.active {
-  color: #0F6E56;
-  border-bottom-color: #1D9E75;
+  color: #06b6d4;
+  border-bottom-color: #06b6d4;
   font-weight: 500;
 }
 
@@ -219,7 +220,7 @@ body {
   padding: 5px 8px;
   border-radius: var(--border-radius-md);
   border: 0.5px solid var(--color-border-secondary);
-  background: var(--color-background-primary);
+  background: var(--color-background-secondary);
   color: var(--color-text-primary);
   outline: none;
   flex: 1;
@@ -228,7 +229,7 @@ body {
 }
 .filter-bar input:focus,
 .filter-bar select:focus {
-  border-color: #1D9E75;
+  border-color: #06b6d4;
 }
 
 /* パンくず */
@@ -241,7 +242,7 @@ body {
   gap: 4px;
 }
 .breadcrumb-link {
-  color: #1D9E75;
+  color: #06b6d4;
   cursor: pointer;
   background: none;
   border: none;
@@ -254,7 +255,7 @@ body {
 
 /* リンク風テキスト */
 .link-text {
-  color: #1D9E75;
+  color: #06b6d4;
   cursor: pointer;
   text-decoration: none;
 }
@@ -291,7 +292,7 @@ body {
 }
 .metric-sub {
   font-size: 10px;
-  color: #1D9E75;
+  color: #06b6d4;
   margin-top: 1px;
 }
 
@@ -336,8 +337,8 @@ body {
   background: var(--color-background-secondary);
 }
 .check-row.selected {
-  background: #E1F5EE;
-  border-color: #9FE1CB;
+  background: #0c2f38;
+  border-color: #0891b2;
 }
 .check-box {
   width: 14px;
@@ -353,9 +354,9 @@ body {
   color: transparent;
 }
 .check-box.checked {
-  background: #1D9E75;
-  border-color: #1D9E75;
-  color: white;
+  background: #06b6d4;
+  border-color: #06b6d4;
+  color: #090e1a;
 }
 
 /* アップロードボックス */
@@ -369,5 +370,5 @@ body {
   cursor: pointer;
 }
 .upload-box:hover {
-  background: var(--color-background-tertiary);
+  background: #243058;
 }
