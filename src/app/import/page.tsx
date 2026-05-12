@@ -303,10 +303,10 @@ export default function ImportPage() {
           background: result.errors.length > 0 ? "#fef2f2" : "#E1F5EE",
           marginTop: "0.9rem",
         }}>
-          <div style={{ fontSize: "13px", fontWeight: 500, marginBottom: "0.4rem" }}>
+          <div style={{ fontSize: "13px", fontWeight: 500, marginBottom: "0.4rem", color: result.errors.length > 0 ? "#991b1b" : "#1D6B52" }}>
             {result.success > 0 ? `✓ ${result.success}件を取り込みました` : "取り込み完了"}
           </div>
-          {result.duplicates > 0 && <div style={{ fontSize: "11px", color: "var(--color-text-secondary)" }}>重複スキップ: {result.duplicates}件</div>}
+          {result.duplicates > 0 && <div style={{ fontSize: "11px", color: result.errors.length > 0 ? "#7f1d1d" : "#1D6B52" }}>重複スキップ: {result.duplicates}件</div>}
           {result.errors.length > 0 && (
             <div style={{ marginTop: "0.5rem" }}>
               <div style={{ fontSize: "11px", fontWeight: 500, color: "#991b1b", marginBottom: "0.25rem" }}>エラー ({result.errors.length}件)</div>
